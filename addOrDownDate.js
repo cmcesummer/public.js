@@ -7,21 +7,13 @@ function changeDate(date, day, type) {
 		y, m, d;
 	if(reg.test(date)) { //传入 yyyy-mm-dd
 		newDate = new Date(date.replace(/-/g, '/'));
-		if(type == '-') {
-			changeNewDate = new Date(newDate.setDate(newDate.getDate() - parseInt(day)));
-		} else {
-			changeNewDate = new Date(newDate.setDate(newDate.getDate() + parseInt(day)));
-		}
+		changeNewDate = new Date(newDate.setDate(newDate.getDate() + parseInt(day)));
 	} else { // 直接传入 new Date();
-		if(type == '-') {
-			changeNewDate = new Date( date.setDate( date.getDate() - parseInt(day) ) ); // setDate()是增减日期后转换成的毫秒数 
-		} else {
-			changeNewDate = new Date( date.setDate( date.getDate() + parseInt(day) ) ); // setDate()是增减日期后转换成的毫秒数 
-		}
+		changeNewDate = new Date( date.setDate( date.getDate() + parseInt(day) ) ); // setDate()是增减日期后转换成的毫秒数 
 	}
 	y = changeNewDate.getFullYear();
-	m = changeNewDate.getMonth() > 10 ? changeNewDate.getMonth() + 1 : '0' + (changeNewDate.getMonth() + 1);
-	d = changeNewDate.getDate() > 10 ? changeNewDate.getDate() : '0' + changeNewDate.getDate();
+	m = changeNewDate.getMonth() > 8 ? changeNewDate.getMonth() + 1 : '0' + (changeNewDate.getMonth() + 1);
+	d = changeNewDate.getDate() > 9 ? changeNewDate.getDate() : '0' + changeNewDate.getDate();
 	return y + '-' + m + '-' + d
 }
 
