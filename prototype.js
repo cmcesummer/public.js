@@ -53,4 +53,23 @@ child.say();
 child.saySb();
 
 //以下es6 class 的继承
-//
+//只是个语法糖
+class ParentClass {
+	constructor(name) {
+		this.name = name;
+		this.color = [1, 2, 3];
+	}
+	sayName() {
+		console.log(this.name);
+	}
+}
+
+class ChildClass extends ParentClass {
+	constructor(name, age) {
+		super(name);           // 这个super() 就相当于 上边的parent.call(this,name) + 原型复制 么 
+		this.age = age;
+	}
+	sayAge() {
+		console.log(this.age)
+	}
+}
