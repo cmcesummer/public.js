@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Promise</title>
+</head>
+<body>
+1
+<script>
+//Promise 不是异步或者说是让回调函数异步，只是给了一个解决回调>问题的方案而已
+//还有 promise新建后立即执行不是等调用再执行
+//下边 add1 和 add2 体会一下
+var arr = [1,2,3,4,5,6,7,8,9];
+for(let i = 0; i < 1000000; i++) {
+	arr.push(i)
+}
+function add1() {
+	return new Promise((resolve,reject) => {
+		let num = 0;
+		for(let i = arr.length - 1; i > -1; i--) {
+			num += arr[i];
+		}
+		console.log(num,'add1正常顺序没有异步');
+		resolve(num); //作用是告诉你状态改变
+	})
+}
+function add2() {
+	return new Promise((resolve,reject) => {
+		setTimeout(() =>{
+			let num = 0;
+			for(let i = arr.length - 1; i > -1; i--) {
+				num += arr[i];
+			}
+			console.log(num,'加settimeout本轮事件结束后运行');
+			resolve(num);
+		},0)
+	})
+}
+
+//then 是这轮事件结束后 而不是 下轮开始前
+add1().then((data) => console.log(1, '回调在promise实例(add1)那一轮事件结束后调用', data));
+add2().then((data) => console.log(1, '回调在promise实例(add2)那一轮事件结束后调用', data));
+console.log(0,'第一轮事件')
+
+//
+//
+
+
+</script>
+</body>
+</html>
