@@ -16,4 +16,6 @@ $ready(() => {
 
 	fncArgu(obj1);
 	// obj1仍然指向原来的对象,之所以value改变了, *是因为changeStuff里的第一条语句，这个时候obj是指向obj1的 .是按值来传递的
+	// 
+	
 })
