@@ -52,6 +52,7 @@ subType.sayAge();
 child.say();
 child.saySb();
 
+
 //以下es6 class 的继承
 //只是个语法糖
 class ParentClass {
