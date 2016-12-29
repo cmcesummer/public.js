@@ -15,3 +15,15 @@ console.log(g1);
 let g2 = g.next(g1.value)
 console.log(g2);
 console.log(g.next(g2.value));
+
+//异步转换为两次调用
+var Thunk = fn => {
+	return (...args) => {
+		return callback => {
+			return fn.call(this, ...args, callback)
+		}
+	}
+}
+
+var fs = Thunk(fs.readFile);
+fs('a.text')(callback)
