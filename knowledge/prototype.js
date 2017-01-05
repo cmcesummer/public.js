@@ -30,7 +30,7 @@ SubType.prototype.sayAge = function() {
 
 function classProto(child, parent) {
 	var fo = Object.create(parent.prototype);
-	fo.constructor = child;
+	fo.constructor = child;     //这里一定要让fo(父类原型的备份)的constructor 指向子类 
 	child.prototype = fo;
 }
 

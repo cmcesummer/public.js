@@ -3,9 +3,17 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Promise</title>
+	<style>
+		::selection {
+			color:#8ebf74;
+			background: #272822;
+		}
+
+	</style>
 </head>
 <body>
 1
+<span calss="changeColor">回调在promise实例(add1)那一轮事件结束后调用</span>
 <script>
 //Promise 不是异步或者说是让回调函数异步，只是给了一个解决回调>问题的方案而已
 //还有 promise新建后立即执行不是等调用再执行
@@ -44,7 +52,19 @@ console.log(0,'第一轮事件')
 
 //
 //
+async function sleep(timeout) {  
+  return new Promise((resolve, reject) => {
+    setTimeout(function() {
+      resolve();
+    }, timeout);
+  });
+}
 
+(async function() {
+  console.log('Do some thing, ' + new Date());
+  await sleep(3000);
+  console.log('Do other things, ' + new Date());
+})();
 
 </script>
 </body>
