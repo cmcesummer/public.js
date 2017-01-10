@@ -84,3 +84,37 @@ console.time(2)
 console.log(compressAlgorithm(str));
 console.timeEnd(2)             //2的性能比1好多了
 })();
+
+
+//function 3
+(() => {
+
+let compressAlgorithm = (str) => {	
+	if(str.length < 3) return str;
+
+	let strArr = str.split(''),
+		arrObj = {},
+		outStr = '';
+
+	strArr.reduce((prev, item, index, arr) => {
+		prev[item] = prev[item] + 1 || 1;
+		return prev ;
+	}, arrObj)	
+
+	for(let key in arrObj) {
+		outStr += key + arrObj[key]
+	}
+
+	if(str.length > outStr.length) {
+		return outStr
+	} else {
+		return str
+	}
+}		
+
+let str = 'aabbbcccccdde'
+console.time(3)
+console.log(compressAlgorithm(str));
+console.timeEnd(3)           //性能 2 和 3差不多  3是用了 Array的reduce 方法
+
+})();
