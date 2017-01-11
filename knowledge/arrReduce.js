@@ -24,3 +24,20 @@ console.log(add(arr));
 //deduceRight
 //reverse  对原数组产生影响
 //concat  对原数组产生影响
+
+
+//按值传递 安引用传递
+var obj = {
+	data:{
+		page:[1],
+		num:1
+	},
+	change() {
+		let a = this.data.page;
+		let b = this.data.num;
+		this.data.page.push(2);
+		this.data.num = 2
+		console.log(a, b)
+	}
+}
+obj.change();
