@@ -22,4 +22,5 @@ console.log(add(arr));
 //filter
 //reduce
 //deduceRight
-
+//reverse  对原数组产生影响
+//concat  对原数组产生影响
