@@ -5,7 +5,7 @@
 function onlyOne(...arg) {
 	let sum = 0;
 	for(let item of arg) {
-		sum += item
+		sum += Number(!!item)   //先强制转换成Boolean
 	}
 	return sum === 1
 }
