@@ -17,7 +17,19 @@ console.log(asd1([123,456,12,85,28,94,65,21,3,5,132,5,23]))  //lan
 console.timeEnd(1)
 
 let asd2 = function(arr) {
+	if(arr.length < 2) {return arr}
+	let i = 0,
+		j = arr.length,
+		itemIndex = arr[0];
 
+	while(i < j) {
+
+		while(arr[j] > itemIndex && i < j) {
+			j--
+		}
+		while(arr[j] < )
+
+	}	
 
 
 
@@ -39,3 +51,4 @@ let qwe = function(arr) {
 console.time(2)
 console.log(qwe([123,456,12,85,28,94,65,21,3,5,132,5,23]))
 console.timeEnd(2)
+
