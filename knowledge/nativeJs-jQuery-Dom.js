@@ -59,6 +59,8 @@ el.hasAttribute('data-title'); // IE8+才有方法，用于判断元素是否拥
 checkboxEl.checked = true;	//特性
 checkboxEl.checked;
 delete el('checked'); //删除特性
+//点方式操作才是与UI状态关联的属性, 就是想在页面上看到checkbox被选中就要用点的方式
+//点方式操作之后，再用attr获取或者操作就不准确了，所以点方式操作才是与UI状态关联的属性
 
 	//jQuery
 $("#logo").attr({"title": "logo"});
