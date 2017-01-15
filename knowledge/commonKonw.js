@@ -10,3 +10,9 @@ function onlyOne(...arg) {
 	return sum === 1
 }
 
+
+var str = 'asdfghj';
+console.log(str.substr(1, 3))  //sdf     这个第二个参数是长度
+console.log(str.substring(1, 3)) //sd    这个第二个参数是结束位置索引（非自包含），3-1 = 2， 2是长度
+
+
