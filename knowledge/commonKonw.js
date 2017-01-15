@@ -21,5 +21,15 @@ console.log(str.substring(1, 3)) //sd    这个第二个参数是结束位置索
 //这就很蛋疼了
 console.log(we); //<div id="we">id</div>
 
+function o_exec(){
+    var str="#id";
+    var reg=/^[^<]*(<(.|\s)+>)[^>]*$|^#(\w+)$/;
+    arr=reg.exec(str);
+    console.log(arr)
+    // while(reg.lastIndex!=str.length){
+    //     alert(arr[0]);
+    //     arr=reg.exec(str);
+    // }
+}    
 
-
+o_exec()
