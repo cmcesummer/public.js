@@ -19,17 +19,37 @@ console.log(str.substring(1, 3)) //sd    这个第二个参数是结束位置索
 //---
 //由于浏览器演进的历史遗留问题， 在创建带有 id 属性的 DOM 元素时也会创建同名的全局变量。 
 //这就很蛋疼了
-console.log(we); //<div id="we">id</div>
+console.log(we); //<div id="we">id</div>   
 
-function o_exec(){
-    var str="#id";
-    var reg=/^[^<]*(<(.|\s)+>)[^>]*$|^#(\w+)$/;
-    arr=reg.exec(str);
-    console.log(arr)
-    // while(reg.lastIndex!=str.length){
-    //     alert(arr[0]);
-    //     arr=reg.exec(str);
-    // }
-}    
 
-o_exec()
+//如果处理的资源太多就要弄一个循环列队的并发，异步的处理这些结果，每次处理之后返回事件循环，让其他等待的事件有机会运行
+(function() {
+
+var res = [];
+
+function response(data) {
+	//一次处理1000个
+	var chunk = data.splice(0, 1000);
+
+	res = res.concat(
+		chunk.map(function(item) {
+			return item * 2
+		})
+	)
+
+	if(data.length > 0) {
+		setTimeout(function() {
+			response(data)
+		}, 0)
+	}
+
+}
+
+$.ajax('url').done(function(data){response(data)})
+
+})();
+
+
+//
+
+
