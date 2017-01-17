@@ -50,6 +50,8 @@ $.ajax('url').done(function(data){response(data)})
 })();
 
 
-//
+//事件循环 和 任务列队
+//事件循环 是 在下一轮开始前  
+//任务列队 是 在这一轮结尾处
 
 
