@@ -45,7 +45,7 @@ function response(data) {
 
 }
 
-$.ajax('url').done(function(data){response(data)})
+//$.ajax('url').done(function(data){response(data)})
 
 })();
 
@@ -68,12 +68,47 @@ function asyncify(fn) {
 
 	return function() {  // 这个返回的函数放在回调中 arguments就是回调返回的数据 data
 		if(index) {
-			fn = orig_fn.bind.apply(orig_fn, [this],concat([].slice.call(arguments)))
+			fn = orig_fn.bind.apply(orig_fn, [this].concat([].slice.call(arguments)))
 		} else {
 			orig_fn.apply(this, arguments);
 		}
 	}	
 }
 
+})();
+
+
+// 关于call apply bind  不过上边那个fn.bind.apply(this,[arr])还是没看懂  this是谁就把谁穿进去
+(function() {
+
+	var fn = function (a,b) {
+		console.log(this,a,b)
+	}
+	var fx = function(){}
+	fn(1,2); //window ,1, 2
+	fn.call(null,1,2);  //window ,1, 2
+	fn.call(fx,1,2);	//fx 1,2	
+	fn.apply(fx,[5,6]);  //fx,1,2
+	fn.apply(null,[5,6])//window ,1, 2
+	fn.bind(undefined,7,8)();  //window 7, 8
+	fn.bind(fx,7,8)();	//fx,7,8
+
+	var shoppingCart = (function(){
+		var _calculatePrice = function () {
+			return this.price * this.amount;
+		};
+		return {
+			calculatePrice : _calculatePrice
+		}
+	})();
+	var goods = {
+		name : 'hammer',
+		price: 199,
+		amount : 2
+	};
+	console.log(shoppingCart.calculatePrice.call(goods)); //398
+
 })()
+
+
 
