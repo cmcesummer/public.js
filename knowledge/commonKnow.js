@@ -55,3 +55,25 @@ $.ajax('url').done(function(data){response(data)})
 //任务列队 是 在这一轮结尾处
 
 
+(function() {
+
+function asyncify(fn) {
+	var orig_fn = fn,
+		index = setTimout(function() {
+			index = null;
+			if(fn) fn();
+		}, 0)
+
+	fn = null;
+
+	return function() {  // 这个返回的函数放在回调中 arguments就是回调返回的数据 data
+		if(index) {
+			fn = orig_fn.bind.apply(orig_fn, [this],concat([].slice.call(arguments)))
+		} else {
+			orig_fn.apply(this, arguments);
+		}
+	}	
+}
+
+})()
+
