@@ -38,11 +38,24 @@ getPromise().then(function(data){
 
 console.log(1)    //  这里先输出1，再2，再‘这是回调’  、、  promise 是在这轮事件循环结束时加上去的事件列队，setTimeout是下轮事件开始前
 
-})()
+})();
+
+var sd = Math.max.apply.bind(null,2,1,4,8);
+console.log(sd());
+
+(function() {
+
+	let pr = Promise.reject('err');
+	let prok = Promise.resolve('ok');
+	let allPro = Promise.race([pr, prok])
+	allPro.then(data => {
+		console.log(2,data)
+	}).catch(err => {
+		console.log(1,err)
+	})
 
 
-
-
+})();
 
 
 
