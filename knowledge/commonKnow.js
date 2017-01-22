@@ -108,7 +108,26 @@ function asyncify(fn) {
 	};
 	console.log(shoppingCart.calculatePrice.call(goods)); //398
 
-})()
+})();
 
+//看下 下面的效率  
+//基本上还是第一个效率略高，但是Opera是第二个
 
+(function() {
+
+console.time('str')
+var s = '0123456789asdfghjklqwertyuiopzxcvbnm0123456789asdfghjklqwertyuiopzxcvbnm0123456789asdfghjklqwertyuiopzxcvbnm0123456789asdfghjklqwertyuiopzxcvbnm';
+for(var i = 0; i < s.length; i++) {
+  s.charAt(i);
+}
+console.timeEnd('str')
+
+console.time('new');
+var s = new String('0123456789asdfghjklqwertyuiopzxcvbnm0123456789asdfghjklqwertyuiopzxcvbnm0123456789asdfghjklqwertyuiopzxcvbnm0123456789asdfghjklqwertyuiopzxcvbnm');
+for(var i = 0; i < s.length; i++) {
+  s.charAt(i);
+}
+console.timeEnd('new')
+
+})();
 
