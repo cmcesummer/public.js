@@ -131,3 +131,18 @@ console.timeEnd('new')
 
 })();
 
+
+//关于暂时性死区
+(function() {
+
+var a = 1;
+(function() {
+	console.log(a);     //这个会报错  所以let不是没有提升，而是提升的是一个error   coust 也是
+	let a = 2;
+})();
+
+function as(a = b, b) {   //这会报错，因为是从左向右运行的，这时b还没有赋值，也是个暂时性死区问题
+ //...					  //函数参数也是个作用域，不存在变量提升或者说提升的是个错误，暂时性死区let
+}
+
+})();
