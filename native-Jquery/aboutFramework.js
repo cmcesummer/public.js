@@ -98,3 +98,18 @@ aquery.prototype.init.prototype = aquery.prototype;   //把aq的原型赋给aq.i
 //
 
 })()
+
+
+;(function(window, undefined) {
+
+var aQuery = () => {}
+
+window.aQuery = window.$ = aQuery;
+
+//window和undefined都是为了减少变量查找所经过的scope作用域。
+//当window通过传递给闭包内部之后，在闭包内部使用它的时候，这里的window就是一个局部变量，
+//比原先在window scope下查找的时候要快一些，不用一层层向上去找。
+
+})(window);
+
+
