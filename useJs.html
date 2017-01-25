@@ -8,10 +8,16 @@
 <div id="we">id</div>
 2
 <script src="modules/DOMContentLoaded.js"></script>
+<script src="native-Jquery/jqSelector.js"></script>	
 <script src="native-Jquery/aboutFramework.js"></script>	
 <script src="../jquery-1.9.1.js"></script>
 <script>
 	console.log($('#we'));
+	var rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/;
+	var str = '<div>s</div>';
+	console.log($(str))
+var match = rquickExpr.exec(str);
+console.log(match,rquickExpr.test(str))
 </script>
 <!-- <script src="test/main.js"></script> -->
 </body>	

@@ -56,7 +56,9 @@ var aquery = function(a, b) {
 
 aquery.prototype = {
 	init : function() {
-		console.log(this)   
+		console.log(this)   ;
+		this.length = 1;
+		this[0] = 'a'
 		return this
 	},
 	name: function() {
@@ -72,7 +74,7 @@ aquery.prototype = {
 
 aquery.prototype.init.prototype = aquery.prototype;   //把aq的原型赋给aq.init的原型 好让init使用aq方法
 //原型传递解决问题
-
+console.log(aquery('a'))   
 })()
 
 
