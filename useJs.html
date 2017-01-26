@@ -6,7 +6,7 @@
 </head>
 <body>
 <div id="we">id</div>
-<div class='selector'>
+<div class='selector' id="sele">
 	<span>2</span>
 	<span>3</span>
 </div>
@@ -24,9 +24,8 @@
 	console.log($(str))
 var match = rquickExpr.exec(str);
 console.log(match,rquickExpr.test(str))
-$('input[name="as"]').change(function() {
-	console.log($(this).val())
-})
+console.log(document.getElementById('sele').getElementsByTagName('span'))
+console.log(document.getElementsByClassName('selector')[0].getElementsByTagName('span'))
 </script>
 <!-- <script src="test/main.js"></script> -->
 </body>	
