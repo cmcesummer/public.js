@@ -6,10 +6,11 @@
 </head>
 <body>
 <div id="we">id</div>
-<div class='selector' id="sele">
+<div class='selector red' id="sele">
 	<span>2</span>
 	<span>3</span>
 </div>
+<div class="red">red</div>
 <input type="radio" value="1" name="as">
 <input type="radio" value="2" name="as">
 2
@@ -24,8 +25,9 @@
 	console.log($(str))
 var match = rquickExpr.exec(str);
 console.log(match,rquickExpr.test(str))
-console.log(document.getElementById('sele').getElementsByTagName('span'))
-console.log(document.getElementsByClassName('selector')[0].getElementsByTagName('span'))
+
+console.log(document.querySelector('.red span:nth-child(1)'))
+
 </script>
 <!-- <script src="test/main.js"></script> -->
 </body>	

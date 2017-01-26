@@ -42,6 +42,10 @@ document.getElementsByClassName('red');
 //实现$('.selector span')  className的时候要加0的，注意这个点
 console.log(document.getElementsByClassName('selector')[0].getElementsByTagName('span'))
 console.log(document.getElementById('sele'))
+//选择同时拥有red和selector的
+console.log(document.getElementsByClassName('selector red')[0])
+
+
 //这是js针对监听多个checkbox或者radio循环添加方法
 console.log(document.querySelectorAll('input[name="as"]'));
 [...document.querySelectorAll('input[name="as"]')].forEach(function(item) {
@@ -49,4 +53,16 @@ console.log(document.querySelectorAll('input[name="as"]'));
 		console.log(this.value)
 	})
 })
+
+
+
+//效率问题
+document.getElementById('sele') //效率最高 所以
+//$("#container").find("div.robotarm"); 
+//$("#container div.robotarm")  上边就比下边效率高很多   所以可以这么写
+document.getElementById('container').querySelectorAll('.robotarm');
+//querySelector() ie8+   
+
+console.log(document.querySelector('.red span:nth-child(1)'));
+
 
