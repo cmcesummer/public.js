@@ -35,5 +35,15 @@ document.getElementsByTagName('input');
 document.getElementsByName('checkbox');  //获取name为checkbox的DOM节点
 
 document.getElementsByClassName('red');
-document.querySelector(); //querySelector() 方法返回文档中匹配指定 CSS 选择器的一个元素。
-document.querySelectorAll(); //如果你需要返回所有的元素，请使用 querySelectorAll() 方法替代。
+//document.querySelector(); //querySelector() 方法返回文档中匹配指定 CSS 选择器的一个元素。
+//document.querySelectorAll(); //如果你需要返回所有的元素，请使用 querySelectorAll() 方法替代。
+
+
+//这是js针对监听多个checkbox或者radio循环添加方法
+console.log(document.querySelectorAll('input[name="as"]'));
+[...document.querySelectorAll('input[name="as"]')].forEach(function(item) {
+	item.addEventListener('change', function() {
+		console.log(this.value)
+	})
+})
+

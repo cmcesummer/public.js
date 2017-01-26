@@ -6,6 +6,12 @@
 </head>
 <body>
 <div id="we">id</div>
+<div class='selector'>
+	<span>2</span>
+	<span>3</span>
+</div>
+<input type="radio" value="1" name="as">
+<input type="radio" value="2" name="as">
 2
 <script src="modules/DOMContentLoaded.js"></script>
 <script src="native-Jquery/jqSelector.js"></script>	
@@ -18,6 +24,9 @@
 	console.log($(str))
 var match = rquickExpr.exec(str);
 console.log(match,rquickExpr.test(str))
+$('input[name="as"]').change(function() {
+	console.log($(this).val())
+})
 </script>
 <!-- <script src="test/main.js"></script> -->
 </body>	
