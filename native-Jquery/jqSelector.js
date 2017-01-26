@@ -60,7 +60,7 @@ console.log(document.querySelectorAll('input[name="as"]'));
 document.getElementById('sele') //效率最高 所以
 //$("#container").find("div.robotarm"); 
 //$("#container div.robotarm")  上边就比下边效率高很多   所以可以这么写
-document.getElementById('container').querySelectorAll('.robotarm');
+document.getElementById('sele').querySelectorAll('.robotarm');
 //querySelector() ie8+   
 
 console.log(document.querySelector('.red span:nth-child(1)'));
