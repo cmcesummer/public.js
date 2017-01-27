@@ -34,10 +34,22 @@
 //var red = document.getElement
 var select = document.getElementsByTagName('select')[0]
 var option = select.options;
-select.value = 2;  //设置selector的value
+//select.value = 2;  //设置selector的value
 //选中的文本
 var index = select.selectedIndex;
 console.log(select.options[index].text)
 
 console.log(select.value);
 
+
+//对于 .html() 来说 就是  innerHTML = ;
+//对于 .text() 来说 是 ele.textContent ; DOM 3 才有的方法
+//
+
+//这个是多选的
+console.log(select.length)
+for(var i = 0; i < select.length; i++) {
+	if(select.options[i].selected) {
+		console.log(select.options[i].value)
+	}
+}
