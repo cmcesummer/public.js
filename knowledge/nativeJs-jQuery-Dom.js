@@ -52,11 +52,11 @@ $('#el').replaceWith(newHtml);
 
 //7.设置属性，获取属性
 	//nativeJs
-el.setAttribute('data-title','native');   //属性
+el.setAttribute('data-title','native');   //特性
 el.getAttribute('data-title');
 el.removeAttribute('data-title');
 el.hasAttribute('data-title'); // IE8+才有方法，用于判断元素是否拥有该特性
-checkboxEl.checked = true;	//特性
+checkboxEl.checked = true;	//属性
 checkboxEl.checked;
 delete el('checked'); //删除特性
 //点方式操作才是与UI状态关联的属性, 就是想在页面上看到checkbox被选中就要用点的方式

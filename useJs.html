@@ -7,16 +7,21 @@
 <body>
 <div id="we">id</div>
 <div class='selector red' id="sele">
-	<span>2</span>
+<span>2</span>
 	<span>3</span>
 </div>
 <div class="red">red</div>
 <input type="radio" value="1" name="as">
 <input type="radio" value="2" name="as">
 2
+<select name="acer" id="">
+	<option value="0" >a</option>
+	<option value="1" selected>b</option>
+	<option value="2">c</option>
+</select>
 <script src="modules/DOMContentLoaded.js"></script>
-<script src="native-Jquery/jqSelector.js"></script>	
-<script src="native-Jquery/aboutFramework.js"></script>	
+<script src="native-Jquery/attrAndProp.js"></script>	
+<!-- <script src="native-Jquery/aboutFramework.js"></script>	 -->
 <script src="../jquery-1.9.1.js"></script>
 <script>
 	console.log($('#we'));
@@ -26,7 +31,7 @@
 var match = rquickExpr.exec(str);
 console.log(match,rquickExpr.test(str))
 
-console.log(document.querySelector('.red span:nth-child(1)'))
+
 
 </script>
 <!-- <script src="test/main.js"></script> -->

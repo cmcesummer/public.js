@@ -66,3 +66,14 @@ document.getElementById('sele').querySelectorAll('.robotarm');
 console.log(document.querySelector('.red span:nth-child(1)'));
 
 
+//
+var $sele = document.getElementById('sele');
+console.log($sele.children);        // ie9+ childNodes 一般是没用的，会包含很多空节点nodeType=3的text
+									//nodetype 1 元素 2属性 3 文本内容 这个就要遍历了
+console.log($sele.parentNode);		//Element的父节点可能是Element，Document或DocumentFragment。
+console.log($sele.parentElement);  //返回元素的父元素节点，与parentNode的区别在于，其父节点必须是一个Element，如果不是，则返回null
+
+console.log($sele.previousSibling); //注意有可能拿到的节点是文本节点或注释节点，与预期的不符，要进行处理一下。
+console.log($sele.previousElementSibling);//ie9+
+
+console.log($sele.getBoundingClientRect())  //感觉这个没多少用
