@@ -97,3 +97,22 @@ let removeArrMap = arr => {
 }
 removeArrMap(sameArr)
 //----------------------4----------------------
+//
+
+//----------------------5----------------------
+let removeJustArr = arr => {
+	let newArr = [arr[0]];
+	arr.sort();
+	for(let i = 1; i < arr.length; i++) {
+		if(arr[i] !== arr[i-1]) {
+			newArr.push(arr[i])
+		}
+	}
+	return newArr;
+}
+console.time(5);
+removeJustArr(sameArr);
+console.timeEnd(5);
+
+console.log(removeJustArr(sameArr));
+//----------------------5----------------------
