@@ -35,6 +35,43 @@
 //navigator.geolocation.getCrrentPosition(success,err)
 //
 //
-//animation @keyframes
+//c3 new
+//animation: name time 
+//@keyframes
 //
 //transition : width(属性名) 1s(时间) 
+/*
+
+border-radius	box-shadow
+
+background-image
+background-size: (width,height)
+background-attachment:fixed
+
+background: linear-gradient(to right, red , blue) 渐变
+linear-gradient  线性
+radial-gradient  径向
+
+text-shadow
+
+@font-face
+
+transform: rotate(30deg) scale(width,height) translate(right,bottom)
+
+transform:rotateX(180deg) 3D转换
+
+transtion:过度 width(属性名) 1s(时间) ，width(属性名) 1s(时间) ;
+
+animation: myfirst 5s;
+@keyframes myfirst
+{
+	0%   {background: red;}
+    25%  {background: yellow;}
+    50%  {background: blue;}
+    100% {background: green;}
+}
+
+box-sizing:border-box 包括border padding   content-box
+
+img{max-width:100%} 图片宽度自适应
+ */
