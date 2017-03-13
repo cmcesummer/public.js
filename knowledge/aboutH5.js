@@ -75,3 +75,8 @@ box-sizing:border-box 包括border padding   content-box
 
 img{max-width:100%} 图片宽度自适应
  */
+
+//选择器
+//p:nth-of-type(2) 选择属于其父元素第二个 <p> 元素
+//p:last-of-type  选择属于其父元素的最后 <p> 元素
+//
