@@ -66,3 +66,33 @@ console.time(2)
 console.log(qwe([123,456,12,85,28,94,65,21,3,5,132,5,23]))
 console.timeEnd(2)
 
+//快速排序
+function stepOne(arr, left, right) {
+	var indexItem = arr[left];
+	while(left < right) {
+		while(left < right && arr[right] > indexItem) {
+			right--
+		}
+		arr[left] = arr[right];
+		left++;
+		while(left < right && arr[left] <= indexItem) {
+			left++
+		}
+		arr[right] = arr[left]
+	}
+	arr[left] = indexItem;
+	return left
+}
+let sortA = function(arr, left = 0, right = arr.length -1) {
+	if(left < right) {
+		let item = stepOne(arr,left,right);
+		sortA(arr,left,item-1);
+		sortA(arr,item+1,right)
+	}
+	return arr;
+}
+
+console.time(4)
+console.log(sortA([123,456,12,85,28,94,65,21,3,5,132,5,23]))
+console.timeEnd(4)
+
