@@ -1,5 +1,8 @@
 function prime(start, end) {
 	function _isPrime(num) {
+		if(num == 0 || num == 1) {
+			reutnr false
+		}
 		if(num == 2) {
 			return true
 		}
@@ -22,6 +25,18 @@ function prime(start, end) {
 	return arr
 }
 
-console.time(1)
-console.log(prime(2,200).length)
-console.timeEnd(1)
+var arr = prime(0,200);
+arr.split(',');
+
+function totalNum(x) {
+	var num = 0;
+	while(x < 1) {
+		num += parseInt(x / 5);
+		x = x / 5;
+	}
+	return num
+}
+
+totalNum(10000)
+
+
