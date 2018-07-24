@@ -111,7 +111,7 @@
             p2 = new promise(function(resolve, reject) {
                 try {
                     var resulte = resolveFn(that.__doneValue);
-                    resolve(resulte);
+                    __middleResolve(resulte, resolve, reject);
                 } catch (e) {
                     reject(e);
                 }
@@ -119,8 +119,8 @@
         } else {
             p2 = new promise(function(resolve, reject) {
                 try {
-                    var s = rejectFn && rejectFn(that.__fileValue);
-                    resolve(s);
+                    var resulte = rejectFn && rejectFn(that.__fileValue);
+                    rejectFn && __middleResolve(resulte, resolve, reject);
                 } catch (e) {
                     reject(e);
                 }
