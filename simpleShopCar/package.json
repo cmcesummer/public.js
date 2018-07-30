@@ -1,0 +1,28 @@
+{
+    "name": "shop-car",
+    "version": "1.0.0",
+    "description": "",
+    "main": "src/index.js",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "rollup -c -w",
+        "build": "rollup -c"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cmcesummer/public.js.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/cmcesummer/public.js/issues"
+    },
+    "homepage": "https://github.com/cmcesummer/public.js#readme",
+    "devDependencies": {
+        "rollup": "^0.63.4",
+        "rollup-watch": "^4.3.1"
+    }
+}
