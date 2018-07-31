@@ -20,13 +20,14 @@ export default class Car {
         this.__carBox = carBox;
         LIST.forEach(item => {
             htmlStr += `
-                <div class="item-list" style="transition: all .3s">  
-                    <input type="checkbox" class="item-input" data-msg="${
-                        item.id
-                    },${item.money}" />
+                <div class="item-list" style="transition: all .3s" data-id="${item.id}">  
+                    <input type="checkbox" class="item-input" data-msg="${item.id},${item.money},${item.num}" />
                     <div>${item.name}</div>
                     <div>${item.describe}</div>
                     <div>${item.money}</div>
+                    <div class="add-btn">+</div>
+                    <div>${item.num}</div>
+                    <div class="reduce-btn">-</div>
                     <div class="delete" data-id="${item.id}">delete</div>
                 </div> 
             `;
@@ -46,13 +47,36 @@ export default class Car {
     computer() {
         let num = 0;
         for (let key in this.__choose) {
-            num += Number(this.__choose[key]);
+            const item = this.__choose[key];
+            num += Number(item.money) * Number(item.num);
         }
         this.__bottom.innerHTML = num.toFixed(2);
     }
 
     addEvent() {
         const context = this;
+        function __addOrReduce(target, type) {
+            const parent = target.parentNode;
+            const check = parent.children[0];
+            
+            if (!check.checked) return
+            const id = parent.getAttribute('data-id');
+            let showNum, numL;
+            if(type) {
+                showNum = target.nextElementSibling;
+                numL = ++context.__choose[id].num;
+            } else {
+                showNum = target.previousElementSibling;
+                numL = --context.__choose[id].num;
+            }
+            if(numL <= 0) {
+                return
+            }
+            const msgArr = check.getAttribute("data-msg").split(",");
+            showNum.innerHTML = msgArr[2] = numL;
+            check.setAttribute('data-msg', msgArr.join(','))
+            context.computer();
+        }
         this.__carBox.addEventListener(
             "click",
             function(e) {
@@ -60,13 +84,17 @@ export default class Car {
                 if (~target.className.indexOf("item-input")) {
                     const msgArr = target.getAttribute("data-msg").split(",");
                     if (target.checked) {
-                        context.__choose[msgArr[0]] = msgArr[1];
+                        context.__choose[msgArr[0]] = {money: Number(msgArr[1]), num: Number(msgArr[2])};
                         context.computer();
                     } else {
                         delete context.__choose[msgArr[0]];
                         context.computer();
                     }
                     context.checkCheckAll();
+                } else if (~target.className.indexOf('add-btn')) {
+                    __addOrReduce(target, 1)
+                } else if (~target.className.indexOf('reduce-btn')) {
+                    __addOrReduce(target, 0)
                 } else if (~target.className.indexOf("delete")) {
                     const parent = target.parentNode;
                     const id = target.getAttribute("data-id");
@@ -157,15 +185,16 @@ export default class Car {
             if (target.checked) {
                 checkbox.forEach(item => {
                     const msgArr = item.getAttribute("data-msg").split(",");
-                    context.__choose[msgArr[0]] = msgArr[1];
+                    context.__choose[msgArr[0]] = {money: msgArr[1], num: msgArr[2]};
                     item.checked = true;
                 });
             } else {
                 checkbox.forEach(item => {
-                    const msgArr = item.getAttribute("data-msg").split(",");
-                    delete context.__choose[msgArr[0]];
+                    // const msgArr = item.getAttribute("data-msg").split(",");
+                    // delete context.__choose[msgArr[0]];
                     item.checked = false;
                 });
+                context.__choose = {};
             }
             context.computer();
         });

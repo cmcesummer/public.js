@@ -8,8 +8,8 @@ class Car extends BaseCar {
 
 new Car({
     data: [
-        { name: "aaa", money: "12", describe: "das2", id: "01" },
-        { name: "aaa", money: "12", describe: "das2", id: "02" }
+        { name: "商品1", money: "12", describe: "miaoshu", num: '1', id: "01" },
+        { name: "商品2", money: "12", describe: "describe", num:'2',id: "02" }
     ],
     parent: document.getElementById("app")
 });
