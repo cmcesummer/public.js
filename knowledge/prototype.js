@@ -74,3 +74,29 @@ class ChildClass extends ParentClass {
 		console.log(this.age)
 	}
 }
+
+
+
+// 组合寄生式继承
+
+function inherit(Child, Parent) {
+	function middle() {};
+	middle.prototype = Parent.prototype;
+	Child.prototype = new middle();
+	Child.prototype.constructor = Child;
+}
+
+function Parent(arg) {
+	this.arg = arg;
+}
+
+Parent.prototype.call = function() {}
+
+function Child(aa, arg) {
+	this.aa = aa;
+	Parent.call(this, arg);
+}
+inherit(Child, Parent);
+Child.prototype.sss = function() {};
+
+
