@@ -115,13 +115,13 @@ function quickTrue(array, start = 0, end = array.length - 1) {
             right = end;
         const middle = array[left];
         while (left < right) {
-            if (left < right && array[right] > middle) {
+            while (left < right && array[right] > middle) {
                 right--;
             }
             if (left < right) {
                 array[left++] = array[right];
             }
-            if (left < right && array[left] <= middle) {
+            while (left < right && array[left] <= middle) {
                 left++;
             }
             if (left < right) {
