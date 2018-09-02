@@ -108,7 +108,7 @@ function sortA(arr, left = 0, right = arr.length - 1) {
     }
     return arr;
 }
-
+// 没必要分开写吧
 function quickTrue(array, start = 0, end = array.length - 1) {
     if (start < end) {
         let left = start,
