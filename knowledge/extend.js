@@ -11,6 +11,7 @@ function extend(deep, target = {}, source) {
     }
 
     for ( let key in source ) { 
+        // 这有两个 for in 是必须的，递归并不能遍历key
         let tar = target[key], sour = source[key];
         if(_isObject(source[key])) {
             target[key] = _isObject(tar) ? tar : {} ;
