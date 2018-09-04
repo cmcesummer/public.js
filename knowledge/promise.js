@@ -57,6 +57,70 @@ console.log(sd());
 
 })();
 
+// 复习一下 promise 的实现：
+;(function() {
+	'use strict';
+	function promise(fn) {
+		this.status = 'pending';
+		this._doneValue = null,
+		this._failValue = null,
+		this._doneArray = [],
+		this._failArray = [];
+		const context = this;
+		function resolve(val) {
+			setTimeout(() => {
+				context._doneValue = value;
+				context._doneArray.forEach(item => item(val))
+			})
+		};
+		function reject(e) {
+			setTimeout(() => {
+				context._failValue = e;
+				context._failArray.forEach(item => item(e))
+			})
+		}	
+
+		try {
+			fn(resolve, reject)
+		} catch(e) {
+			reject(e)
+		}
+	}
+
+	promise.prototype.then = function(resFn, rejFn) {
+		const context = this;
+		const p2 = new promise(function(res, rej) {
+			context._doneArray.push(function(value) {
+				const resResult = resFn(value);
+				_middleWare(resResult, res, rej);
+			});
+			context._failArray.push(function(e) {
+				const resResult = resFn(e);
+				_middleWare(resResult, res, rej);
+			})
+		});
+		
+		return p2;
+	}
+
+	function _middleWare(result, res, rej) {
+		if(result && (typeof result === 'object' || typeof result === 'function')) {
+			if(typeof result.then === 'function') {
+				result.then(function(val) {
+					res(val);
+				})
+			} else {
+				res(result)
+			}
+		} else {
+			res(result)
+		}
+	}
+
+
+
+
+})();
 
 
 
