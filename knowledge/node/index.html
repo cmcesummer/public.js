@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>5</title>
+    <style type="text/css">
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .main,
+        .m-center {
+            height: 200px;
+            line-height: 200px;
+            text-align: center;
+        }
+
+        .m-center {
+            z-index: 2;
+            width: 500px;
+            margin-left: -250px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+        }
+
+        .left,
+        .right {
+            z-index: 1;
+            position: absolute;
+            top: 0;
+            width: 50%;
+        }
+
+        .left {
+            left: 0;
+        }
+
+        .left .main {
+            margin-right: 250px;
+        }
+
+        .right {
+            right: 0;
+        }
+
+        .right .main {
+            margin-left: 250px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <style>
+        #outer {
+            padding: 20px;
+            background: #616161;
+        }
+
+        #inner {
+            width: 100px;
+            height: 100px;
+            background: #757575;
+        }
+    </style>
+    <div id="outer">
+        <div id="inner"></div>
+    </div>
+
+    <script>
+        $.ajax({
+            url: 'http://127.0.0.1:8000/test',
+            method: 'POST',
+            data: { change: true, host: window.location.host },
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
+        }).done(res => {
+            console.log(res)
+        }).fail(e => console.log(e))
+
+
+        fetch('http://127.0.0.1:8000/test', { answer: 42 }).then(res => {
+            console.log(res)
+        })
+
+
+        // 注释的这段代码是内存泄漏的  多个闭包共享闭包作用域
+
+        // let leakObject = null
+        // let count = 0
+
+        // setInterval(function testMemoryLeak() {
+        //     let originLeakObject = leakObject
+        //     const unused = function () {
+        //         if (originLeakObject) {
+        //             console.log('originLeakObject')
+        //         }
+        //     }
+        //     leakObject = {
+        //         count: String(count++),
+        //         leakStr: new Array(1e7).join('*'),
+        //         leakMethod: function () {
+        //             console.log('leakMessage')
+        //         }
+        //     }
+        // }, 100)
+
+    </script>
+</body>
+
+</html>
