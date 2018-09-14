@@ -74,4 +74,5 @@ http.createServer(function(req, res) {
     }
 }).listen(8000, _ => {
     console.log(8000);
+    console.log(_);
 });
