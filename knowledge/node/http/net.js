@@ -5,7 +5,7 @@ const path = require("path");
 const querystring = require("querystring");
 var util = require("util");
 
-const AllowOriginList = ["http://127.0.0.1:7001", "http://localhost:7001"]; // 再拓展其他白名单域名 防止csrf
+const AllowOriginList = ["http://127.0.0.1:7001", "http://192.168.18.226:7001"];
 
 http.createServer(function(req, res) {
     const url = URL.parse(req.url);
@@ -15,7 +15,8 @@ http.createServer(function(req, res) {
         pathname: ${url.pathname},
         method: ${req.method},
         origin: ${origin},
-        header: ${req.headers.cookie}
+        header: ${req.headers.cookie},
+        time: ${new Date().toLocaleString()}
     `
     );
 
@@ -31,9 +32,22 @@ http.createServer(function(req, res) {
                     "Content-type": "application/json",
                     "Access-Control-Allow-Origin": origin,
                     "Access-Control-Allow-Methods": "GET, OPTIONS, POST",
-                    "Access-Control-Allow-Headers": "Content-Type"
+                    "Access-Control-Allow-Headers": "Content-Type,operator-id"
                 });
                 res.write(JSON.stringify(reqObj));
+                res.end();
+            }
+        } else if (req.method == "OPTIONS") {
+            if (~AllowOriginList.indexOf(origin)) {
+                res.writeHead(200, {
+                    "Content-type": "application/json",
+                    "Access-Control-Allow-Origin": origin,
+                    "Access-Control-Allow-Credentials": true,
+                    "Access-Control-Allow-Methods": "GET, OPTIONS, POST",
+                    "Access-Control-Allow-Headers": "Content-Type, operator-id",
+                    "Access-Control-Max-Age": 30 // 预检查请求的缓存时间 / s
+                });
+                // res.write();
                 res.end();
             }
         } else if (req.method == "POST") {
@@ -52,7 +66,7 @@ http.createServer(function(req, res) {
                         "Content-type": "application/json",
                         "Access-Control-Allow-Origin": origin,
                         "Access-Control-Allow-Methods": "GET, OPTIONS, POST",
-                        "Access-Control-Allow-Headers": "Content-Type",
+                        "Access-Control-Allow-Headers": "Content-Type, operator-id",
                         "Access-Control-Allow-Credentials": true
                     });
                     reqObj.data.return = post;
@@ -62,7 +76,7 @@ http.createServer(function(req, res) {
             });
         }
     } else if (url.pathname == "/page") {
-        fs.readFile(path.join(__dirname, "./index.html"), (err, data) => {
+        fs.readFile(path.join(__dirname, "../build/index.html"), (err, data) => {
             if (err) return false;
             res.writeHead(200, {
                 "Content-type": "text/html"
@@ -74,5 +88,4 @@ http.createServer(function(req, res) {
     }
 }).listen(8000, _ => {
     console.log(8000);
-    console.log(_);
 });
