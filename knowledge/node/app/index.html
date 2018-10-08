@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>app</title>
+    <style type="text/css">
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #outer {
+            padding: 20px;
+            background: #616161;
+        }
+        #inner {
+            width: 150px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #757575;
+            float: left;
+            cursor: pointer;
+        }
+        #right {
+            margin-left: 160px;
+            height: 100px;
+            background: #707070;
+            display: flex;
+        }
+        #right > div {
+            flex: 1;
+            padding: 10px;
+        }
+        #right > div > span {
+            height: 100%;
+            cursor: pointer;
+            border: 1px solid #616161;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="outer">
+        <div id="inner">send fetch</div>
+        <div id="right">
+            <div class="page4"> <span>get baidu</span> </div>
+            <div class="page3"> <span>get weather</span> </div>
+            <div class="page1"> <span>set cookie</span> </div>
+            <div class="page2"> <span>change cookie</span> </div>
+        </div>
+    </div>
+
+    <script>
+        !(_ => {
+            
+            const inner = document.querySelector('#inner');
+            const right = document.querySelector('#right');
+
+            inner.addEventListener('click', _ => {
+                fetch('http://127.0.0.1:8080/api', { 
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        "operator-id": "999999",
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    },
+                    body: JSON.stringify({name: 'test'}) 
+                }).then(res => {
+                    return res.json()
+                }).then(data => console.log(data))
+            }, false);
+
+            right.addEventListener('click', e => {
+                const target = e.target;
+                const parentName = e.target.parentNode.className;
+                if(~parentName.indexOf('page')) {
+                    const index = parentName.slice(-1);
+                    switch (index) {
+                        case '1' :
+                            document.cookie = 'psw=123;path=/';
+                            break;
+                        case '2' :
+                            document.cookie = 'psw=13;path=/';
+                            break;    
+                        case '3' :
+                            window.location.href = '/name?page=0'
+                            break;
+                        case '4' :
+                            window.location.href = '/name?page=1'
+                            break;    
+                    }
+                }
+            }, false)
+            
+        })();
+        
+    </script>
+</body>
+
+</html>

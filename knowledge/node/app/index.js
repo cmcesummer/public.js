@@ -1,53 +1,35 @@
-const http = require("http");
-// const
+const paths = require("path");
+const fs = require("fs");
+const util = require("util");
+
 const App = require("./app");
+const { constDict, middleWareDict, utilDict } = require("./common");
+const { PORT, PAGE_STATION, ALLOW_ORIGIN_LIST } = constDict;
+const { timeMiddle, testCookie, cookieParse } = middleWareDict;
+const { promiseGet, originFactory } = utilDict
 
-const app = new App(8080);
+const readFilePro = util.promisify(fs.readFile);
 
-const PAGE_STATION = [
-    'http://www.weather.com.cn/',
-    'http://www.baidu.com/'
-]
+const app = new App(PORT, port => {
+    console.log(`listen at http://127.0.0.1:${port}/`)
+});
 
-const timeMiddle = async (ctx, next) => {
-    const start = Date.now();
-    await next();
-    console.log("");
-    console.log(`method: ${ctx.req.method}`);
-    console.log(`pathname: ${ctx.req.url.pathname}`);
-    console.log(`use time: ${Date.now() - start} ms`);
-    console.log(`now: ${new Date().toLocaleString()} \n`);
-};
+let post_api_call_num = 0;
 
-const testQuery = async (ctx, next) => {
-    const query = ctx.req.url.query;
-    if (query.psw === "123") {
-        await next();
-        return;
-    }
-    ctx.res.write("error");
-    ctx.res.end();
-};
+app.get('/', [timeMiddle, cookieParse], async ctx => {
+    const file = await readFilePro(paths.join(__dirname, './index.html'), 'utf-8');
+    ctx.res.write(file);
+    return
+})
 
-const promiseGet = function(url) {
-    return new Promise((resolve, reject) => {
-        http.get(url, res => {
-            var html = "";
-            res.on("data", data => {
-                html += data;
-            });
-            res.on("end", () => {
-                resolve(html);
-            });
-        }).on("error", _ => {
-            reject(_);
-        });
-    });
-};
-
-app.get("/name", [timeMiddle, testQuery], async ctx => {
+app.get("/name", [timeMiddle, cookieParse, testCookie], async ctx => {
     const page = ctx.req.url.query.page;
     const path = PAGE_STATION[page];
+    if(page === void 0) {
+        const file = await readFilePro(paths.join(__dirname, './index.html'), 'utf-8');
+        ctx.res.write(file);
+        return
+    }
     if(path) {
         const reslut = await promiseGet(path);
         ctx.res.write(reslut);
@@ -55,3 +37,38 @@ app.get("/name", [timeMiddle, testQuery], async ctx => {
     } 
     ctx.res.write('55555555555555');
 });
+
+// 非普通请求使用
+app.options("/api", async ctx => {
+    const origin = ctx.req.headers.origin;
+    if(~ALLOW_ORIGIN_LIST.indexOf(origin)) {
+        ctx.res.writeHead(200, originFactory(origin, 'OPTIONS'));
+        ctx.res.end();
+    }
+})
+
+app.post("/api", [timeMiddle], async ctx => {
+    const origin = ctx.req.headers.origin;
+    const contextType = ctx.req.headers['content-type'];
+    if(!~ALLOW_ORIGIN_LIST.indexOf(origin) && origin != `http://127.0.0.1:${PORT}`) {
+        ctx.res.end();
+        return
+    }
+    let resHeader = {};
+    if(origin != `http://127.0.0.1:${PORT}`) {
+        resHeader = originFactory(origin, 'POST')
+    }
+    if(contextType) {
+        post_api_call_num++;
+        resHeader = {...resHeader, 'Content-type': contextType, 'Set-Cookie': [`post_api_call_num=${post_api_call_num};path=/api`]}
+        ctx.res.writeHead(200, resHeader);
+    }
+    const body =  ctx.req.body;
+    const reqObj = {
+        CODE: 200,
+        DATA: { cluster: "dev", return: body, created: false },
+        MSG: "success"
+    };
+    ctx.res.write(JSON.stringify(reqObj));
+    ctx.res.end();
+})
