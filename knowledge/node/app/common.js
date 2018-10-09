@@ -1,11 +1,12 @@
 const http = require("http");
+const https = require("https");
 
 /**
  * CONST
  */ 
 const constDict = {
     PORT: 8080,
-    PAGE_STATION: ['http://www.weather.com.cn/','http://www.baidu.com/'],
+    PAGE_STATION: ['','http://www.baidu.com/'],
     ALLOW_ORIGIN_LIST : ["http://127.0.0.1:5500", "http://192.168.18.226:5500"],
     CACHE_CONTROL_MAX_AGE: 60 * 60 * 12
 }
@@ -54,7 +55,8 @@ const middleWareDict = {
 const utilDict = {
     promiseGet: url => {
         return new Promise((resolve, reject) => {
-            http.get(url, res => {
+
+            https.get(url, res => {
                 var html = "";
                 res.on("data", data => {
                     html += data;

@@ -50,7 +50,7 @@
         <div id="inner">send fetch</div>
         <div id="right">
             <div class="page4"> <span>get baidu</span> </div>
-            <div class="page3"> <span>get weather</span> </div>
+            <div class="page3"> <span>get Template Data</span> </div>
             <div class="page1"> <span>set cookie</span> </div>
             <div class="page2"> <span>change cookie</span> </div>
         </div>
@@ -89,7 +89,12 @@
                             document.cookie = 'psw=13;path=/';
                             break;    
                         case '3' :
-                            window.location.href = '/name?page=0'
+                            fetch('http://127.0.0.1:8080/name?page=0', { 
+                                method: 'GET',
+                                credentials: 'include',
+                            }).then(res => {
+                                return res.json()
+                            }).then(data => console.log(data))
                             break;
                         case '4' :
                             window.location.href = '/name?page=1'

@@ -14,6 +14,9 @@ const app = new App(PORT, port => {
     console.log(`listen at http://127.0.0.1:${port}/`)
 });
 
+console.log(process.env.NODE_ENV);
+console.log(process.argv.slice(2));
+
 let post_api_call_num = 0;
 
 app.get('/', [timeMiddle, cookieParse], async ctx => {
