@@ -125,6 +125,196 @@ console.log(sd());
 
 
 
+// restart
+
+!(function() {
+	'use strict';
+
+	const PENDING = 'pending';
+	const REJECTED = 'rejected';
+	const FULFILLED = 'fulfilled';
+
+	function MyPromise(fn) {
+		// const context = this;
+		this.state = PENDING;
+		this.value = null;
+		this.reason = null;
+		this.fulfilledCallback = [];
+		this.rejectedCallback = [];
+
+		const resolve = val => {
+			if (this.state === PENDING) {
+				setTimeout(() => {
+					this.state = FULFILLED;
+					this.value = val;
+					this.fulfilledCallback.forEach(item => item());
+				})
+			}
+		}
+
+		const reject = reason => {
+			if (this.state === PENDING) {
+				setTimeout(() => {
+					this.state = REJECTED;
+					this.reason = reason;
+					this.rejectedCallback.forEach(item => item());
+				})
+			}
+		}
+
+		try {
+			fn(resolve, reject) 
+		} catch(_) {
+			reject(_)
+		}
+	}
+
+	function middlePromiseThen(promise2, x, resolve, reject) {
+		if (promise2 === x) {
+			return reject(new Error('loop'));
+		}
+
+		if (x !== null && (Object.prototype.toString.call(x) === '[object Object]' || Object.prototype.toString.call(x) === '[object Function]')) {
+			try {
+				const then = x.then;
+				if (typeof then === 'function') {
+					then(value => {
+						middlePromiseThen(promise2, value, resolve, reject);
+					}, reason => {
+						reject(reason);
+					})
+				} else {
+					resolve(x);
+				}
+			} catch(_) {
+				reject(_);
+			}
+		} else {
+			resolve(x);
+		}
+	}
+
+	MyPromise.prototype.then = function(resFn, rejFn) {
+		resFn = typeof resFn === 'function' ? resFn : value => value;
+		rejFn = typeof rejFn === 'function' ? rejFn : reason => { throw reason };
+		let promise2 = null;
+		promise2 = new MyPromise((resolve, reject) => {
+			if(this.state === PENDING) {
+				this.fulfilledCallback.push(() => {
+					try {
+						const returnValue = resFn(this.value);
+						middlePromiseThen(promise2, returnValue, resolve, reject);
+					} catch(_) {
+						reject(_);
+					}
+				});
+				this.rejectedCallback.push(() => {
+					try {
+						const returnValue = rejFn(this.reason);
+						middlePromiseThen(promise2, returnValue, resolve, reject);
+					} catch(_) {
+						reject(_);
+					}
+				});
+			} else if (this.state === FULFILLED) {
+				try {
+					const returnValue = resFn(this.value);
+					middlePromiseThen(promise2, returnValue, resolve, reject);
+				} catch(_) {
+					reject(_);
+				}
+			} else {
+				try {
+					const returnValue = rejFn(this.reason);
+					middlePromiseThen(promise2, returnValue, resolve, reject);
+				} catch(_) {
+					reject(_);
+				}
+			}
+		})
+
+		return promise2
+	}
+
+	MyPromise.prototype.catch = function(rejFn) {
+		return this.then(null, rejFn)
+	}
+
+	MyPromise.prototype.finally = function(fn) {
+		return this.then(value => {
+			fn(value);
+			return value
+		}, reason => {
+			fn(reason);
+			return reason
+		})
+	}
+
+	MyPromise.all = function(promiseArray) {
+		const resolveArray = [];
+		return new MyPromise((reslove, reject) => {
+			promiseArray.forEach((item, index) => {
+				item.then(res => {
+					resolveArray[index] = res;
+					if(resolveArray.length === promiseArray.length) reslove(resolveArray) ;
+				}, reject)
+			})
+		})
+	}
+
+	MyPromise.race = function(promiseArray) {
+		return new MyPromise((reslove, reject) => {
+			promiseArray.forEach(item => {
+				item.then(res => {
+					reslove(res)
+				}, reject)
+			})
+		})
+	}
+
+	MyPromise.resolve = function(reason) {
+		return new MyPromise((resolve, reject) => {
+			reject(reason)
+		})
+	}
+
+	// MyPromise.prototype.then = function(resFn, rejFn) {
+	// 	if (this.state === PENDING) {
+	// 		this.fulfilledCallback.push(() => resFn(this.value));
+	// 		this.rejectedCallback.push(() => rejFn(this.reason));
+	// 	} else if (this.state === FULFILLED) {
+	// 		resFn(this.value)
+	// 	} else {
+	// 		rejFn(this.reason)
+	// 	}
+	// }
+
+
+
+	setTimeout(function() {
+		console.log(5)
+	})
+
+	var chan = new Promise(function(resolve) {
+		resolve(1)
+	})
+
+	chan.then(v => {
+		setTimeout(function() {
+			console.log(v)
+		})
+		return new Promise(function(res) {
+			res(v + 9)
+		})
+	}).then(console.log)
+
+	console.log(2)
+
+})();
+
+
+
+
 
 
 
