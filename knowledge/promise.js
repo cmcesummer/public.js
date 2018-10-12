@@ -314,6 +314,147 @@ console.log(sd());
 
 
 
+(function() {
+	'use strict';
+
+	const PENDING = 'pending';
+	const FULFILLED = 'fulfilled';
+	const REJECTED = 'rejected';
+	
+	function Promise(fn) {
+		this.state = PENDING;
+		this.value = null;
+		this.reason = null;
+		this.resloveArray = [];
+		this.rejectArray = [];
+
+		const reslove = value => {
+			if(this.state === PENDING) {
+				setTimeout(() => {
+					this.value = value;
+					this.state = FULFILLED;
+					this.resloveArray.forEach(item => item());
+				})
+			}
+		}
+
+		const reject = reason => {
+			if(this.state === PENDING) {
+				setTimeout(() => {
+					this.reason = reason;
+					this.state = REJECTED;
+					this.rejectArray.forEach(item => item());
+				})
+			}
+		}
+
+		try {
+			fn(reslove, reject);
+		} catch(e) {
+			reject(e);
+		}
+	}
+
+	const promiseMiddleThen = (promise2, x, resolve, reject) => {
+		if(x === promise2) {
+			reject(new TypeError('loop'))
+		}
+		if(x !== null && ({}.toString.call(x) === '[object Object]' || {}.toString.call(x) === '[object Function]')) {
+			try {
+				const then = x.then;
+				if(typeof then === 'function') {
+					then(value => promiseMiddleThen(promise2, value, reslove, reject), reason => reject(reason))
+				} else {
+					resolve(x)
+				}
+			} catch(e) {
+				reject(e)
+			}
+		} else {
+			resolve(x);
+		}
+	}
+
+	Promise.prototype.then = function(resFn, rejFn) {
+		const promise2 = new Promise((resolve, reject) => {
+			if(this.state === PENDING) {
+				this.resloveArray.push(() => {
+					try {
+						const value = resolve(this.value);
+						promiseMiddleThen(promise2, value, resolve, reject);
+					} catch (e) {
+						reject(e);
+					}
+				})
+				this.rejectArray.push(() => {
+					try {
+						const reason = resolve(this.reason);
+						promiseMiddleThen(promise2, reason, resolve, reject);
+					} catch (e) {
+						reject(e);
+					}
+				})
+			} else if (this.state === FULFILLED) {
+				try {
+					const value = resolve(this.value);
+					promiseMiddleThen(promise2, value, resolve, reject);
+				} catch (e) {
+					reject(e);
+				}
+			} else {
+				try {
+					const reason = resolve(this.reason);
+					promiseMiddleThen(promise2, reason, resolve, reject);
+				} catch (e) {
+					reject(e);
+				}
+			}
+		});
+
+		return promise2
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+})();
+
+
+
 
 
 
