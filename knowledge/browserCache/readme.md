@@ -54,9 +54,79 @@ app.use(async (ctx, next) => {
 
 ### Last-Modified/If-Modified-Since/If-Unmodified-Since
 
+- `Last-Modified`用于标记请求资源的最后一次修改时间;
+- 返回的资源带有`Last-Modified`标识时，再次请求该资源，浏览器会自动带上`If-Modified-Since`，值为返回的`Last-Modified`值。请求到达服务器后，服务器进行判断，如果从上次更新后没有再更新，则返回304。如果更新了则重新返回.
+- 如果`Expires，Cache-Control: max-age`，或 `Cache-Control:s-maxage`都没有在响应头中出现，这个才生效
 
+```js
+app.use(async (ctx, next) => {
+  // 在此处设置缓存策略
+  const stat = fs.statSync(ctx.filePath);
+  const mtime = new Date(stat.mtime).toGMTString();
+  const lastMod = ctx.get("If-Modified-Since");
+  if (lastMod === mtime) {
+    ctx.status = 304;
+    return;
+  }
+  ctx.set("Last-Modified", mtime);
+  next();
+});
+```
 
+### ETag/If-Match/If-None-Match
 
+- `ETag`是请求资源在服务器的唯一标识，浏览器可以根据`ETag`值缓存数据。在再次请求时通过`If-None-Match`携带上次的`ETag`值，如果值不变，则返回304，如果改变你则返回新的内容。
+- ETag和If-None-Match的值均为双引号包裹的。
+- `If-Match`判断逻辑逻辑与`If-None-Match`相反
+
+```js
+app.use(async (ctx, next) => {
+  const tag = `"${ctx.filemd5}"`; // 文件的md5 也可以是别的
+  const matchTag = ctx.get("If-None-Match");
+  if (matchTag === tag) {
+    ctx.status = 304;
+    log('ETag生效')
+    return;
+  }
+  ctx.set("ETag", tag);
+  next();
+});
+```
+
+- 当`ETag`和`Last-Modified`，`ETag`优先级更高，但不会忽略`Last-Modified`, 需要服务端实现;
+
+```js
+app.use(async (ctx, next) => {
+  // 设置ETag
+  const tag = `"${ctx.filemd5}"`;
+  ctx.set("ETag", tag);
+  const matchTag = ctx.get("If-None-Match");
+  // 设置Last-Modified
+  const lastMod = ctx.get("If-Modified-Since");
+  const stat = fs.statSync(ctx.filePath);
+  const mtime = new Date(stat.mtime).toGMTString();
+  ctx.set("Last-Modified", mtime);
+  if (matchTag) {
+    // etag 缓存判断
+    if (matchTag === tag) {
+      ctx.status = 304;
+      log('ETag 生效')
+      return;
+    }
+  } else if(lastMod) {
+    // last-modified缓存
+    if (lastMod === mtime) {
+      ctx.status = 304;
+      log('Last-Modified 生效')
+      return;
+    }
+  }
+  next();
+});
+```
+
+## 优缺点
+![优缺点](https://github.com/cmcesummer/public.js/blob/master/knowledge/browserCache/image/cache2.png)
 
 
 
@@ -73,3 +143,4 @@ app.use(async (ctx, next) => {
 
 
 [from](https://mp.weixin.qq.com/s/b_vo_epjycDsGvczU6ol3Q)
+[code](https://github.com/verymuch/learning-web-cache)
