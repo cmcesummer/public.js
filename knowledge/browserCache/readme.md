@@ -126,9 +126,16 @@ app.use(async (ctx, next) => {
 ```
 
 ## 优缺点
+
 ![优缺点](https://github.com/cmcesummer/public.js/blob/master/knowledge/browserCache/image/cache2.png)
 
+## 最佳实践
 
+1. 不要缓存HTML，避免缓存后用户无法及时获取到更新内容。
+
+2. 使用`Cache-Control`和`ETag`来控制`HTML`中所使用的静态资源的缓存。一般是将`Cache-Control`的`max-age`设成一个比较大的值，然后用`ETag`进行验证。
+
+3. 使用签名或者版本来区分静态资源。这样静态资源会生成不同的资源访问链接，不会产生修改之后无法感知的情况
 
 
 
