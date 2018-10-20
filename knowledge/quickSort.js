@@ -178,3 +178,69 @@ function quickTrue(array, start = 0, end = array.length - 1) {
  * 数据量小的时候看不出什么 ， sort更有优势
  * 但是数据量大的时候， 快排是挺快的
  */ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function quickSort(arr, start = 0, end = arr.length - 1) {
+    if(start < end) {
+        let left = start,
+            right = end,
+            middle = arr[start];
+        while (left < right) {
+            while (arr[right] > middle && right > left) {
+                right--;
+            }
+            if (right > left) {
+                arr[left] = arr[right];
+                left++;
+            }
+            while (arr[left] <= middle && right > left) {
+                left++;
+            }
+            if(right > left) {
+                arr[right] = arr[left];
+                right--;
+            }
+        }
+        arr[left] = middle;
+        quickSort(arr, start, left - 1);
+        quickSort(arr, left + 1, end);
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
