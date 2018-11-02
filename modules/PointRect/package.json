@@ -1,0 +1,23 @@
+{
+    "name": "pointrect",
+    "version": "1.0.0",
+    "description": "pointRect, 按顺序点击验证的。",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "node ./script/build",
+        "r": "rollup -c ./script/rollup.js"
+    },
+    "author": "cmce",
+    "license": "ISC",
+    "devDependencies": {
+        "babel-core": "^6.26.3",
+        "babel-plugin-external-helpers": "^6.22.0",
+        "babel-preset-env": "^1.7.0",
+        "rollup": "^0.66.6",
+        "rollup-plugin-babel": "^3.0.7",
+        "rollup-plugin-cleanup": "^3.0.0",
+        "rollup-plugin-filesize": "^5.0.1",
+        "rollup-plugin-license": "^0.7.0"
+    }
+}

@@ -143,6 +143,8 @@ function mid(g, val) {
         v.value.then(val => {
             mid(g, val);
         });
+    } else {
+        return v.value;
     }
 }
 ```
