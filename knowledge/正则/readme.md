@@ -100,3 +100,32 @@
 "regex".match(/[^re]/);
 // ["g", index: 2, input: "regex", groups: undefined]
 ```
+
+## 捕获组与非捕获组
+
+圆括号
+
+```js
+"i love you very very very much".match(/i love you (very )+much/);
+// ["i love you very very very much", "very ", index: 0, input: "i love you very very very much", groups: undefined]
+```
+
+圆括号的意思是将它其中的字符集合打包成一个整体，然后量词就可以操作这个整体了。这和方括号的效果是完全不一样的。
+
+而且默认的，圆括号的匹配结果是可以捕获的。
+
+### 正则内捕获
+
+```js
+"<App>hello regex</App>".match(/<([a-zA-Z]+)>.*<\/\1>/);
+// ["<App>hello regex</App>", "App", index: 0, input: "<App>hello regex</App>", groups: undefined]
+```
+
+这时候就要用到正则的捕获特性。正则内捕获使用\数字的形式，分别对应前面的圆括号捕获的内容。这种捕获的引用也叫**反向引用**。
+
+```js
+"<App>hello regex</App><p>A</p><p>hello regex</p>".match(/<((A|a)pp)>(hello regex)+<\/\1><p>\2<\/p><p>\3<\/p>/);
+// ["<App>hello regex</App><p>A</p><p>hello regex</p>", "App", "A", "hello regex", index: 0, input: "<App>hello regex</App><p>A</p><p>hello regex</p>", groups: undefined]
+```
+
+如果有嵌套的圆括号，那么捕获的引用是先递归的，然后才是下一个顶级捕获。
