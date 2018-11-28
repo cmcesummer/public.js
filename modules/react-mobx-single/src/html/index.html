@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0,viewport-fit=cover" />
+        <title>mobx-react-single</title>
+        <style>
+            html {
+                background: #f1f9fd;
+            }
+        </style>
+        <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css %>" />
+    </head>
+
+    <body>
+        <div class="spinner">
+            <div class="inner_loading_circle"></div>
+            <div class="inner_text" style="color: #009cff;padding-top: 12px;font-size: 14px;">加载中...</div>
+        </div>
+        <div id="react_root" style="position: absolute;top: 0;bottom: 0;left:0;right:0"></div>
+    </body>
+    <script src="<%= htmlWebpackPlugin.files.chunks['vendor'].entry %>"></script>
+</html>
