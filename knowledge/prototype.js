@@ -1,24 +1,24 @@
-'use strict'
+"use strict";
 
 function SuperType(name) {
-	this.name = name;
-	this.color = [1,2,3];
+    this.name = name;
+    this.color = [1, 2, 3];
 }
 SuperType.prototype.say = function() {
-	console.log(this.name);
-}
+    console.log(this.name);
+};
 
 function SubType(name, age) {
-	SuperType.call(this, name);
+    SuperType.call(this, name);
 
-	this.age = age;
+    this.age = age;
 }
 
 SubType.prototype = new SuperType();
 SubType.prototype.constructor = SubType;
 SubType.prototype.sayAge = function() {
-	console.log(this.age);
-}
+    console.log(this.age);
+};
 
 //上边的缺点是 进行了两次SuperType类的调用 ：
 //第一次是在 给子类原型 new 父类时，
@@ -29,74 +29,109 @@ SubType.prototype.sayAge = function() {
 //下边的思想是：子类的原型就是想要一个父类原型的复制值，那就复制给你，再增强一下复制给子类原型的constructor,子类构造函数还是有要call 的。
 
 function classProto(child, parent) {
-	var fo = Object.create(parent.prototype);
-	fo.constructor = child;     //这里一定要让fo(父类原型的备份)的constructor 指向子类 
-	child.prototype = fo;
+    var fo = Object.create(parent.prototype);
+    fo.constructor = child; //这里一定要让fo(父类原型的备份)的constructor 指向子类
+    child.prototype = fo;
 }
 
 function ChildType(name, isSb) {
-	SuperType.call(this, name);
+    SuperType.call(this, name);
 
-	this.isSb = isSb;
+    this.isSb = isSb;
 }
 classProto(ChildType, SuperType);
 ChildType.prototype.saySb = function() {
-	console.log(this.isSb);
-}
+    console.log(this.isSb);
+};
 
-var subType = new SubType('a', '12');
-var child = new ChildType('b', 'sb');
+var subType = new SubType("a", "12");
+var child = new ChildType("b", "sb");
 
 subType.say();
 subType.sayAge();
 child.say();
 child.saySb();
 
-
 //以下es6 class 的继承
 //只是个语法糖
 class ParentClass {
-	constructor(name) {
-		this.name = name;
-		this.color = [1, 2, 3];
-	}
-	sayName() {
-		console.log(this.name);
-	}
+    constructor(name) {
+        this.name = name;
+        this.color = [1, 2, 3];
+    }
+    sayName() {
+        console.log(this.name);
+    }
 }
 
 class ChildClass extends ParentClass {
-	constructor(name, age) {
-		super(name);           // 这个super() 就相当于 上边的parent.call(this,name) + 原型复制 么 
-		this.age = age;
-	}
-	sayAge() {
-		console.log(this.age)
-	}
+    constructor(name, age) {
+        super(name); // 这个super() 就相当于 上边的parent.call(this,name) + 原型复制 么
+        this.age = age;
+    }
+    sayAge() {
+        console.log(this.age);
+    }
 }
-
-
 
 // 组合寄生式继承
 
 function inherit(Child, Parent) {
-	function middle() {};
-	middle.prototype = Parent.prototype;
-	Child.prototype = new middle();
-	Child.prototype.constructor = Child;
+    function middle() {}
+    middle.prototype = Parent.prototype;
+    Child.prototype = new middle();
+    Child.prototype.constructor = Child;
 }
 
 function Parent(arg) {
-	this.arg = arg;
+    this.arg = arg;
 }
 
-Parent.prototype.call = function() {}
+Parent.prototype.call = function() {};
 
 function Child(aa, arg) {
-	this.aa = aa;
-	Parent.call(this, arg);
+    this.aa = aa;
+    Parent.call(this, arg);
 }
 inherit(Child, Parent);
 Child.prototype.sss = function() {};
 
-
+// 三种继承形式
+(function() {
+    function createT(inhert) {
+        function A() {
+            this.a = 1;
+        }
+        A.prototype.ca = function() {};
+        function B() {
+            A.call(this);
+            this.b = 2;
+        }
+        inhert(A, B);
+        B.prototype.ca2 = function() {};
+        var b = new B();
+        console.log(b);
+    }
+    function inhert(P, C) {
+        function M() {}
+        M.prototype = P.prototype;
+        C.prototype = new M();
+        C.prototype.constructor = C;
+    }
+    function inhert2(P, C) {
+        C.prototype = P.prototype;
+        C.prototype.constructor = C;
+    }
+    function inhert3(P, C) {
+        C.prototype = Object.create(P.prototype);
+        C.prototype.constructor = C;
+    }
+    createT(inhert);
+    createT(inhert2);
+    createT(inhert3);
+    const ob = {
+        a: 222,
+        c: 999
+    };
+    console.log(Object.create(ob));
+})();
