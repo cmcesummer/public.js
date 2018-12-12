@@ -1,0 +1,27 @@
+{
+    "name": "loading",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./dist/loadingPage.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "rollup --config ./rollup.config.js",
+        "build-w": "rollup --config ./rollup.config.js -w"
+    },
+    "devDependencies": {
+        "babel-core": "^6.26.3",
+        "babel-plugin-external-helpers": "^6.22.0",
+        "babel-plugin-transform-runtime": "^6.23.0",
+        "babel-preset-env": "^1.6.1",
+        "babel-preset-stage-2": "^6.24.1",
+        "babel-register": "^6.26.0",
+        "rollup": "^0.58.2",
+        "rollup-copy-plugin": "0.0.1",
+        "rollup-plugin-babel": "^3.0.4",
+        "rollup-plugin-json": "^3.1.0",
+        "rollup-plugin-node-resolve": "^3.3.0",
+        "rollup-plugin-uglify": "^3.0.0"
+    },
+    "author": "",
+    "license": "ISC"
+}
