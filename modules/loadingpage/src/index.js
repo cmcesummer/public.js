@@ -1,6 +1,6 @@
-export { change_default_loading, after_load_fn, debug } from "./util";
-import { debug_flag } from "./util";
+export { change_default_loading, after_load_fn, debug, change_load_fn } from "./util";
 export { version } from "../package.json";
+import { debug_flag } from "./util";
 import Loading from "./loading";
 
 export function preload(obj) {

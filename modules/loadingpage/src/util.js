@@ -140,19 +140,86 @@ export function append_loading_to_dom(num) {
     };
 }
 
-export function after_load_fn(arr) {
-    let div = document.createElement("div"),
-        html = "";
-    div.style.display = "none";
-    arr.forEach(function(item) {
-        html += '<img src="' + item + '">';
-    });
-    div.innerHTML = html;
-    document.body.appendChild(div);
-}
-
 export let debug_flag = false;
 
 export function debug() {
     debug_flag = true;
+}
+
+const REG = /\/.*?\.(\w*?)(\?.*|$)/;
+
+function load_image_fn(url, cb) {
+    const image = new Image();
+    image.onload = image.onerror = e => {
+        e.stopPropagation();
+        cb && cb();
+    };
+    image.src = url;
+    return image;
+}
+
+function load_mp3_fn(url, cb) {
+    const mp = new Audio();
+    mp.onload = mp.onerror = e => {
+        e.stopPropagation();
+        cb && cb();
+    };
+    mp.autoplay = false;
+    mp.src = url;
+    return mp;
+}
+
+const LOAD_FILES_TYPE_MAP = {
+    jpg: load_image_fn,
+    png: load_image_fn,
+    gif: load_image_fn,
+    jpeg: load_image_fn,
+    mp3: load_mp3_fn
+};
+
+/**
+ * 修改加载类型 以及加载方法
+ * @param {string} files 文件类型
+ * @param {function} fn 加载函数  return 出这个dom
+ */
+export function change_load_fn(files, fn) {
+    if (typeof fn != "function") {
+        console.warn("you need a function in second argument");
+        return false;
+    }
+    LOAD_FILES_TYPE_MAP[files] = fn;
+}
+
+/**
+ * 加载单个文件 对外函数
+ * @param {string} url
+ * @param {function} cb
+ */
+export function loading_single(url, cb) {
+    const match_array = url.match(REG);
+    const file_type = match_array ? match_array[1] : "jpg";
+    const load_fn = LOAD_FILES_TYPE_MAP[file_type] || LOAD_FILES_TYPE_MAP["jpg"];
+    return load_fn(url, cb);
+}
+
+/**
+ * 载入完毕后的预加载函数
+ * @param {*} arr 加载的数组
+ * @param {*} finish 所有完成后的回调
+ */
+export function after_load_fn(arr, finish) {
+    let div = document.createElement("div"),
+        num = 0,
+        leng = arr.length;
+    div.style.display = "none";
+    arr.forEach(function(item) {
+        const dom = loading_single(item, function() {
+            num++;
+            if (num === leng) {
+                finish && finish();
+            }
+        });
+        div.appendChild(dom);
+    });
+    document.body.appendChild(div);
 }
