@@ -1,6 +1,6 @@
 import Handler from "./handler";
 // import default_config from "./interface";
-import { after_load_fn, getComputedStyle, domReady, append_loading_to_dom, preventDefault } from "./util";
+import { after_load_fn, getComputedStyle, domReady, append_loading_to_dom, preventDefault, debug_flag } from "./util";
 
 let _loading_page_number = 0;
 
@@ -46,13 +46,8 @@ export default class Loading {
     }
 
     loading_load(html_dom) {
-        const {
-            loading_arr,
-            before_load_callback,
-            loading_all_callback,
-            loading_single_callback,
-            _use_js_append_dom_map
-        } = this.config;
+        const { loading_arr, before_load_callback, loading_all_callback, loading_single_callback } = this.config;
+        const { _use_js_append_dom_map } = this;
         if (_use_js_append_dom_map) {
             const { loadingPage } = _use_js_append_dom_map;
             loadingPage.addEventListener("touchmove", preventDefault, false);
@@ -79,13 +74,8 @@ export default class Loading {
     }
 
     page_load() {
-        const {
-            page_arr,
-            page_all_callback,
-            page_single_callback,
-            after_load_arr,
-            _use_js_append_dom_map
-        } = this.config;
+        const { page_arr, page_all_callback, page_single_callback, after_load_arr } = this.config;
+        const { _use_js_append_dom_map } = this;
         let over_cb = () => {
             if (_use_js_append_dom_map) {
                 const { loadingPage, documentElement, getColorStyle, defaultColor, div } = _use_js_append_dom_map;
@@ -98,8 +88,7 @@ export default class Loading {
         };
 
         if (page_arr.length === 0) {
-            over_cb();
-            page_all_callback("", 0, 0);
+            page_all_callback(over_cb);
             after_load_arr.length !== 0 && this.after_load_fn();
             return;
         }
@@ -110,11 +99,11 @@ export default class Loading {
                 e.stopPropagation();
                 this.page_num++;
                 page_single_callback(item, index, this.page_num);
+                if (debug_flag) console.log("page_load", item, index, this.page_num);
                 if (this.page_num === page_arr.length) {
                     loading_time = new Date() - this.now_time;
-                    over_cb();
-                    console.log(`loading images use ${loading_time}ms`);
-                    page_all_callback(item, index, this.page_num);
+                    if (debug_flag) console.log(`loading images use ${loading_time}ms`);
+                    page_all_callback(over_cb);
                     after_load_arr.length !== 0 && this.after_load_fn();
                 }
             };
@@ -142,7 +131,7 @@ export default class Loading {
             const { documentElement, div } = append_loading_to_dom(this._loading_page_number);
             let defaultColor = "",
                 getColorStyle = true,
-                loadingPage = div.querySelector(".loadingPage");
+                loadingPage = div.children[0];
             try {
                 defaultColor = window.getComputedStyle(documentElement).getPropertyValue("background-color");
                 documentElement.style.backgroundColor = "#f1f9fd";

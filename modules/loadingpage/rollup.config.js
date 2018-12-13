@@ -20,8 +20,8 @@ export default {
         babel({
             exclude: "node_modules/**",
             runtimeHelpers: true
-        })
-        // uglify(),
+        }),
+        uglify()
     ],
     watch: {
         include: ROOT_PATH + "/**"

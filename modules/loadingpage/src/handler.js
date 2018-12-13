@@ -12,13 +12,10 @@ export default class Handler {
     }
 
     has(key) {
-        if (this.handler[key]) {
-            return true;
-        }
-        return false;
+        return this.handler[key];
     }
 
-    clear(key) {
+    off(key) {
         if (key && this.handler[key]) {
             delete this.handler[key];
             return;
