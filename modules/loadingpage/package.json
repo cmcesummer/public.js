@@ -1,6 +1,6 @@
 {
     "name": "loading_page",
-    "version": "1.2.1",
+    "version": "1.3.1",
     "description": "",
     "main": "./dist/loading_page.js",
     "scripts": {

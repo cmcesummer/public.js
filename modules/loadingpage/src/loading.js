@@ -13,6 +13,10 @@ const default_config = {
     name: "",
     // 是否使用 js 添加 dom ( 或者是自己写dom, 控制它 )  （ 是否使用这种js添加dom的方式 ）
     no_use_string_html: false,
+    // 最大loading时间， 只有 no_use_string_html 为 false 才有用
+    max_timer: 10000,
+    // 最大loading时间后的callback， 只有 no_use_string_html 为 false 才有用
+    max_timer_cb: space_fn,
     // loading 元素上用到的 loading 图
     loading_arr: [],
     // 首屏需要加载的图片数组
@@ -73,20 +77,24 @@ export default class Loading {
         });
     }
 
+    over_cb = () => {
+        const { _use_js_append_dom_map, _timer } = this;
+        if (_use_js_append_dom_map) {
+            const { loadingPage, documentElement, getColorStyle, defaultColor, div } = _use_js_append_dom_map;
+            loadingPage.removeEventListener("touchmove", preventDefault, false);
+            if (getColorStyle && defaultColor) {
+                documentElement.style.backgroundColor = defaultColor;
+            }
+            documentElement.removeChild(div);
+            if (_timer) {
+                clearTimeout(_timer);
+            }
+        }
+    };
+
     page_load() {
         const { page_arr, page_all_callback, page_single_callback, after_load_arr } = this.config;
-        const { _use_js_append_dom_map } = this;
-        let over_cb = () => {
-            if (_use_js_append_dom_map) {
-                const { loadingPage, documentElement, getColorStyle, defaultColor, div } = _use_js_append_dom_map;
-                loadingPage.removeEventListener("touchmove", preventDefault, false);
-                if (getColorStyle && defaultColor) {
-                    documentElement.style.backgroundColor = defaultColor;
-                }
-                documentElement.removeChild(div);
-            }
-        };
-
+        const { over_cb } = this;
         if (page_arr.length === 0) {
             page_all_callback(over_cb);
             after_load_arr.length !== 0 && this.after_load_fn();
@@ -120,7 +128,7 @@ export default class Loading {
         let space_time,
             use_cache = true;
 
-        const { day, name, all_image_container, page_arr, no_use_string_html } = this.config;
+        const { day, name, all_image_container, page_arr, no_use_string_html, max_timer, max_timer_cb } = this.config;
         const storage_time = window.localStorage ? window.localStorage.getItem(name) : "";
         const day_time = 86400000 * day;
         const now_time = new Date().getTime();
@@ -145,6 +153,10 @@ export default class Loading {
                 documentElement,
                 div
             };
+            this._timer = setTimeout(() => {
+                this.over_cb();
+                max_timer_cb();
+            }, max_timer || 10000);
         }
 
         // dom完成后开始加载图片

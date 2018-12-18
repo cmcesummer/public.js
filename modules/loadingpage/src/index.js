@@ -37,6 +37,8 @@ export function auto(obj = {}) {
                     }
                     finishCb && finishCb();
                     page_all_callback();
+                    handler.off(local_key);
+                    handler.off(local_key_ready);
                 });
                 handler_ready = true;
                 if (handler.has(local_key_ready)) {
@@ -47,6 +49,11 @@ export function auto(obj = {}) {
                 setTimeout(function() {
                     handler.fire(local_key, { name: "img over", cb: finishCb });
                 }, 200);
+            },
+            max_timer_cb() {
+                page_all_callback();
+                handler.off(local_key);
+                handler.off(local_key_ready);
             }
         }).init(),
         fire = () => handler.fire(local_key, { name: "other over" });
