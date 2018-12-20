@@ -133,6 +133,20 @@ const { preload } = loading_page;
 const handler = preload(interface);
 ```
 
+在这里介绍一下返回的`handler`对象:
+
+```js
+const KEY = "handler_key";
+// 添加一个监听者
+handler.on(KEY, () => {});
+// 执行一个监听者 并 传参
+handler.fire(KEY, "VALUE");
+// 是否存在这个监听者
+handler.has(KEY);
+// 解除这个监听者
+handler.off(KEY);
+```
+
 ## 拓展你的预加载文件
 
 虽然我觉得这个肯定也没有人会用，但我还是想多介绍一下这个功能。~~（毕竟是 OCP 原则，我信了你的邪）~~
