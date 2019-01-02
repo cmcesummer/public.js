@@ -16,6 +16,8 @@ async 函数，就是将 generator 函数的\*换成 async，将 yield 替换成
    **await 后面的代码被压入 microtask 队列**。当主线程执行完毕，取出这个回调，发现 await 语句等待的函数返回了 promise，把后续代码赋给这个 promise 对象的 then，并把这个 promise 的回调再压入 microtask 队列，重新排队。当它前面的回调函数都被取出执行后，再取出它，执行.
    **也就是说 如果 await 后是 promise 的话，实际上是 微进程中再出现微进程，就又排到最后去了**
 
+   **async 函数默认返回的是一个 promise**
+
 🌰
 
 ```js
