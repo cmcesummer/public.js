@@ -94,6 +94,113 @@ resolved
 */
 ```
 
+还有一个例子：
+
+```js
+async function asyncFn() {
+    console.log("asyncFn");
+    let res = await asyncFn2();
+    console.log(res);
+}
+
+async function asyncFn2() {
+    console.log("asyncFn2");
+    let res = await fn3();
+    console.log(res);
+    return "asyncFn2 return";
+}
+
+async function fn3() {
+    console.log("fn3");
+    return "555555";
+}
+
+setTimeout(() => {
+    console.log("setTimeout");
+}, 0);
+
+console.log("script start");
+
+asyncFn();
+
+let promise = new Promise(resolve => {
+    console.log("promise");
+    resolve("promise resolved");
+    console.log("after promise resolved");
+}).then(res => {
+    console.log(res);
+});
+```
+
+其实这个相当于：
+这个是 v8 新版本的转化
+
+```js
+// 相当于
+function asyncFn() {
+    console.log("asyncFn");
+    console.log("asyncFn2");
+    Promise.resolve(fn3())
+        .then(res => {
+            console.log(res);
+            return Promise.resolve("asyncFn2 return");
+        })
+        .then(res => {
+            console.log(res);
+        });
+}
+
+async function fn3() {
+    console.log("fn3");
+    return "555555";
+}
+asyncFn();
+
+new Promise(resolve => {
+    console.log("promise");
+    resolve("promise resolved");
+    console.log("after promise resolved");
+}).then(res => {
+    console.log(res);
+});
+```
+
+可以参考这个文章： [async/awaiy promise](https://juejin.im/post/5c0f73e4518825689f1b5e6c)
+上个版本 v8 的转化：
+
+```js
+async function async1() {
+    console.log("async1 start");
+    await async2();
+    console.log("async1 end"); // 放到 async2 的 then 中
+}
+async function async2() {
+    console.log("async2");
+}
+new Promise(function(resolve) {
+    console.log("promise1");
+    resolve("resolved");
+}).then(function(data) {
+    console.log(data);
+});
+// ============ change =====
+function async1() {
+    console.log("async1 start");
+    Promise.resolve(async2())
+        .then(() => {})
+        .then(() => {})
+        .then(res => {
+            console.log("async1 end");
+        });
+}
+new Promise(function(resolve) {
+    console.log("promise1");
+    resolve("resolved");
+}).then(function(data) {
+    console.log(data);
+});
+```
+
 ## 怎么做到的
 
 ### 先看下 generator
