@@ -135,3 +135,63 @@ Child.prototype.sss = function() {};
     };
     console.log(Object.create(ob));
 })();
+
+// ===============继承对比=======================
+
+(() => {
+    function A() {
+        this.a = 1;
+    }
+    A.prototype.chan = function() {
+        console.log(this.a);
+    };
+    function B() {
+        A.call(this);
+        this.b = 2;
+    }
+    // 这里可以取消注释后看看 。。
+    // B.prototype = A.prototype; // 这样会改变 A的原型链上的东西， 所以不这样做
+    B.prototype = Object.create(A.prototype);
+    B.prototype.constructor = B;
+    B.prototype.cab = function() {
+        console.log(this.a, this.b);
+    };
+    function C() {
+        A.call(this);
+        this.b = 2;
+    }
+    C.prototype = new A();
+    C.prototype.constructor = C;
+    C.prototype.cab = function() {
+        console.log(this.a, this.b);
+    };
+    function D() {
+        A.call(this);
+        this.b = 2;
+    }
+    function changeProto(P, C) {
+        const M = function() {};
+        M.prototype = P.prototype;
+        C.prototype = new M();
+        C.prototype.constructor = C;
+    }
+    changeProto(A, D);
+    D.prototype.cab = function() {
+        console.log(this.a, this.b);
+    };
+    function E() {
+        A.call(this);
+        this.b = 2;
+    }
+    E.prototype = Object.create(A.prototype);
+    E.prototype.constructor = E;
+    E.prototype.cab = function() {
+        console.log(this.a, this.b);
+    };
+    console.log(new B(), new C(), new D());
+    // -----这里说一下 Object.create():
+    // Object.create()方法创建一个新对象，
+    // 使用现有的对象来提供新创建的对象的__proto__
+    // const a = {a: 1}; const b = Object.create(a);
+    // b: {}  b.__proto__ = {a:1}
+})();
