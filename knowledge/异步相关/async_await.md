@@ -201,6 +201,78 @@ new Promise(function(resolve) {
 });
 ```
 
+```js
+new Promise((resolve, reject) => {
+    resolve(); //resolve_1
+})
+    .then(() => {
+        // then_task_1
+        console.log("promise1 resolved");
+    })
+    .then(() => {
+        // then_task_2
+        console.log("promise2 resolved");
+    })
+    .then(() => {
+        // then_task_3
+        console.log("promise3 resolved");
+    });
+
+new Promise((resolve, reject) => {
+    resolve(); //resolve_2
+})
+    .then(() => {
+        // then_task_x
+        console.log("promisex resolved");
+    })
+    .then(() => {
+        // then_task_y
+        console.log("promisey resolved");
+    })
+    .then(() => {
+        // then_task_z
+        console.log("promisez resolved");
+    });
+
+console.log("main");
+
+//result:
+//main
+//promise1 resolved
+//promisex resolved
+//promise2 resolved
+//promisey resolved
+//promise3 resolved
+//promisez resolved
+
+new Promise((resolve, reject) => {
+    resolve(Promise.resolve()); //这里的Promise.resolve会添加一个null任务到job queue，外层resolve对应async1_end_task
+}).then(() => {
+    //async1_end_task
+    console.log("async1 end");
+});
+
+new Promise(function(resolve) {
+    resolve(); //对应promise2_task
+})
+    .then(function() {
+        //promise2_task
+        console.log("promise2");
+    })
+    .then(function() {
+        //promise3_task
+        console.log("promise3");
+    })
+    .then(function() {
+        //promise4_task
+        console.log("promise4");
+    });
+// VM11068:11 promise2
+// VM11068:13 promise3
+// VM11068:4 async1 end
+// VM11068:15 promise4
+```
+
 ## 怎么做到的
 
 ### 先看下 generator
