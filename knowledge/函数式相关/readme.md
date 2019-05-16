@@ -29,7 +29,7 @@ function compose(...args) {
 }
 ```
 
-http://www.taoweng.site/index.php/archives/250/
+https://segmentfault.com/a/1190000010608477
 柯里化
 
 ```ts
