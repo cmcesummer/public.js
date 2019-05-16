@@ -30,3 +30,41 @@ function compose(...args) {
 ```
 
 http://www.taoweng.site/index.php/archives/250/
+柯里化
+
+```ts
+(window as any).add = function(...arg: any) {
+    return arg.reduce((a: number, b: number) => {
+        return a + b;
+    });
+};
+
+/**
+ * var a = crry(add);
+ * a(1)(2,3)(4)
+ */
+(window as any).crry = function(fn: any) {
+    const cache: any = [];
+    function a(...arg: any) {
+        cache.push(...arg);
+        return a;
+    }
+    a.toString = function() {
+        const res = [...cache];
+        cache.length = 0;
+        return fn(...res);
+    };
+
+    return a;
+};
+
+// kelihua
+(window as any).crruy = function(fn: any, ...arg: any) {
+    if (arg.length > fn.length) {
+        return fn(...arg);
+    }
+    return function(...args: any) {
+        return (window as any).crruy(fn, ...arg, ...args);
+    };
+};
+```
