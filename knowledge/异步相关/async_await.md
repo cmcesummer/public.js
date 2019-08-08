@@ -15,10 +15,12 @@ async 函数，就是将 generator 函数的\*换成 async，将 yield 替换成
 2. 当这个函数返回 promise：  
    **await 后面的代码被压入 microtask 队列**。当主线程执行完毕，取出这个回调，发现 await 语句等待的函数返回了 promise，把后续代码赋给这个 promise 对象的 then，并把这个 promise 的回调再压入 microtask 队列，重新排队。当它前面的回调函数都被取出执行后，再取出它，执行.  
    **也就是说 如果 await 后是 promise 的话，实际上是 微进程中再出现微进程，就又排到最后去了**  
-   **async 函数默认返回的是一个 promise**  
-   **await 后如果不是 promise 就转换成 promise， await 下边的函数都放到这个 promise 的 then 中去。**  
-   所以 当 async2 不是返回 pormise 时， 相当于 await promise.then(), 第一个放到微进程中  
-   当 async2 是返回 promise 时，相当于 await promise.then().then(), 第一个 then 先放到微进程中，第二个 then 在执行微进程时再放入进程队尾
+   **也就是说 如果 await 后是 同步函数 的话， 添加到微进程， 如果是异步函数（async function()...）， 添加到微进程中的微进程**
+
+    **async 函数默认返回的是一个 promise**  
+     **await 后如果不是 promise 就转换成 promise， await 下边的函数都放到这个 promise 的 then 中去。**  
+     所以 当 async2 不是返回 pormise 时， 相当于 await promise.then(), 第一个放到微进程中  
+     当 async2 是返回 promise 时，相当于 await promise.then().then(), 第一个 then 先放到微进程中，第二个 then 在执行微进程时再放入进程队尾
 
 🌰
 
