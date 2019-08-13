@@ -18,6 +18,8 @@ async 函数，就是将 generator 函数的\*换成 async，将 yield 替换成
    **也就是说 如果 await 后是 同步函数 的话， 添加到微进程， 如果是异步函数（async function()...）， 添加到微进程中的微进程**(node: 10.15.3, chrome: 75.0)
    **也就是说 await 本身就相当于一个 Promise ( await 会让出线程 )**
 
+    [这个总结的比较全面](https://juejin.im/post/5c3cc981f265da616a47e028#heading-18)
+
     **async 函数默认返回的是一个 promise**  
      **await 后如果不是 promise 就转换成 promise， await 下边的函数都放到这个 promise 的 then 中去。**  
      所以 当 async2 不是返回 pormise 时， 相当于 await promise.then(), 第一个放到微进程中  
@@ -95,6 +97,47 @@ promise1
 func1 return
 resolved
 */
+```
+
+```js
+// https://github.com/Advanced-Frontend/Daily-Interview-Question/issues/7#issuecomment-520804037
+// https://stackoverflow.com/questions/53894038/whats-the-difference-between-resolvethenable-and-resolvenon-thenable-object
+new Promise(r => {
+    r(Promise.resolve());
+}).then(_ => {
+    console.log("56 == 1");
+});
+// 这个过程凭空插入了一个时序
+new Promise(r => {
+    r(Promise.resolve().then(_ => console.log("then")));
+}).then(_ => {
+    console.log("56 == 2");
+});
+new Promise(r => {
+    r(
+        Promise.resolve()
+            .then(_ => console.log("then1"))
+            .then(_ => console.log("then2"))
+    );
+}).then(_ => {
+    console.log("56");
+});
+new Promise(r => {
+    console.log(`0`);
+    r();
+})
+    .then(_ => {
+        console.log(`1`);
+    })
+    .then(_ => {
+        console.log(`2`);
+    })
+    .then(_ => {
+        console.log(`3`);
+    })
+    .then(_ => {
+        console.log(`4`);
+    });
 ```
 
 还有一个例子：
