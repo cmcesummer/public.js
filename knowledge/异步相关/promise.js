@@ -1,3 +1,4 @@
+// https://github.com/Lucifier129/promise-aplus-impl/blob/master/src/naive.js
 const PENDING = "p";
 const FULFILLED = "f";
 const REJECT = "r";
