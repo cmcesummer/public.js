@@ -1,5 +1,5 @@
 {
-    "prettier.printWidth": 120,
+    "prettier.printWidth": 160,
     "liveServer.settings.port": 7001,
     "search.exclude": {
         "**/node_modules": true,

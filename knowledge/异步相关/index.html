@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+    </head>
+    <body>
+        <script>
+            (() => {
+                const PENDING = "P";
+                const FULFILLED = "F";
+                const REJECTED = "R";
+
+                const isFunction = fn => typeof fn === "function";
+                const isPromise = fn => fn instanceof PRO;
+                const isObject = fn => typeof fn === "object";
+                const isThenable = fn => (isFunction(fn) || isObject(fn)) && "then" in fn;
+
+                function transform(promise, state, value) {
+                    promise.state = state;
+                    promise.result = value;
+                    const [callbacks] = promise;
+                    setTimeout(() => {
+                        while (callbacks.length) {
+                            //
+                            const cb = callbacks.shift();
+                            handleCallback(cb, state, value);
+                        }
+                    }, 0);
+                }
+
+                function PRO(fn) {
+                    this.state = PENDING;
+                    this.result = null;
+                    this.callbacks = [];
+                    let flag = false;
+                    const onErrorFn = err => transform(this, REJECTED, err);
+                    const onSuccessFn = value => transform(this, FULFILLED, value);
+                    const resolve = value => {
+                        if (flag) return;
+                        flag = true;
+                        resolvePromise(this, value, onSuccessFn, onErrorFn);
+                    };
+                    const reject = err => {
+                        if (flag) return;
+                        flag = true;
+                        onErrorFn(err);
+                    };
+
+                    try {
+                        fn(resolve, reject);
+                    } catch (e) {
+                        reject(e);
+                    }
+                }
+
+                function resolvePromise(promise, value, resolve, reject) {
+                    if (promise === value) {
+                        return reject(new Error());
+                    }
+                    if (isPromise(value)) {
+                        // 使用倒推法， 如果return的是promise，那then里的function一定是推到那个promise的callback中，所以就要transform,所以就要PRO中的resolve
+                        return value.then(resolve, reject);
+                    }
+                    if (isThenable(value)) {
+                        try {
+                            const { then } = value;
+                            return new PRO(then.bind(value)).then(resolve, reject);
+                        } catch (e) {
+                            reject(e);
+                        }
+                    }
+                    resolve(value);
+                }
+
+                function handleCallback(callback, state, value) {
+                    const { onSuccessCallback, onErrorCallback, resolve, reject } = callback;
+                    if (state === FULFILLED) {
+                        isFunction(onSuccessCallback) ? resolve(onSuccessCallback(value)) : resolve(value);
+                    } else if (state === REJECTED) {
+                        isFunction(onErrorCallback) ? reject(onErrorCallback(value)) : reject(value);
+                    }
+                }
+
+                PRO.prototype.then = function(onSuccessCallback, onErrorCallback) {
+                    return new PRO((resolve, reject) => {
+                        const callback = { onSuccessCallback, onErrorCallback, resolve, reject };
+                        if (this.state === PENDING) {
+                            this.callbacks.push(callback);
+                        } else {
+                            setTimeout(() => {
+                                handleCallback(callback, this.state, this.result);
+                            }, 0);
+                        }
+                    });
+                };
+            })();
+        </script>
+    </body>
+</html>
