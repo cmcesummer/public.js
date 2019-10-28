@@ -380,7 +380,7 @@ console.log(sd());
 			if(this.state === PENDING) {
 				this.resloveArray.push(() => {
 					try {
-						const value = resolve(this.value);
+						const value = resFn(this.value);
 						promiseMiddleThen(promise2, value, resolve, reject);
 					} catch (e) {
 						reject(e);
@@ -388,7 +388,7 @@ console.log(sd());
 				})
 				this.rejectArray.push(() => {
 					try {
-						const reason = resolve(this.reason);
+						const reason = resFn(this.reason);
 						promiseMiddleThen(promise2, reason, resolve, reject);
 					} catch (e) {
 						reject(e);
@@ -396,14 +396,14 @@ console.log(sd());
 				})
 			} else if (this.state === FULFILLED) {
 				try {
-					const value = resolve(this.value);
+					const value = resFn(this.value);
 					promiseMiddleThen(promise2, value, resolve, reject);
 				} catch (e) {
 					reject(e);
 				}
 			} else {
 				try {
-					const reason = resolve(this.reason);
+					const reason = resFn(this.reason);
 					promiseMiddleThen(promise2, reason, resolve, reject);
 				} catch (e) {
 					reject(e);
