@@ -107,9 +107,9 @@
         const factory = (state, array) => {
             return value => {
                 if (this.state === PENDING) {
+                    this.state = state;
+                    this.value = value;
                     setTimeout(() => {
-                        this.state = state;
-                        this.value = value;
                         array.map(item => item());
                     });
                 }
@@ -154,6 +154,61 @@
             } else {
                 factory(errorFn);
             }
+        });
+    };
+    Promise.prototype.catch = function(errorFn) {
+        return this.then(null, errorFn);
+    };
+    Promise.prototype.finally = function(fn) {
+        return this.then(
+            () => {
+                fn();
+            },
+            () => {
+                fn();
+            }
+        );
+    };
+    Promise.resolve = function(value) {
+        return new Promise((resolve, reject) => resolve(value));
+    };
+    Promise.reject = function(error) {
+        return new Promise((resolve, reject) => reject(error));
+    };
+    Promise.all = function(pArray) {
+        const resArray = [];
+        return new Promise((resolve, reject) => {
+            pArray.forEach((p, index) => {
+                p.then(value => {
+                    resArray[index] = value;
+                    if (resArray.length === pArray.length) return resolve(resArray);
+                }, reject);
+            });
+        });
+    };
+    Promise.race = function(pArray) {
+        return new Promise((resolve, reject) => {
+            for (const p of pArray) {
+                p.then(value => {
+                    return resolve(value);
+                }, reject);
+            }
+        });
+    };
+    Promise.retry = function(p, times = 1, delay = 0) {
+        let error = null;
+        return new Promise((resolve, reject) => {
+            const fn = function() {
+                if (times <= 0) return reject(error);
+                p()
+                    .then(resolve)
+                    .catch(e => {
+                        times--;
+                        error = e;
+                        setTimeout(fn, delay);
+                    });
+            };
+            fn();
         });
     };
 })();
