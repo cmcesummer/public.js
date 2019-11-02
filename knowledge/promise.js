@@ -415,7 +415,75 @@ console.log(sd());
 	}
 
 
+(() => {
+    const PENDING = 'P';
+    const FULFILED = 'F';
+    const REJECTED = 'R';
 
+    function Promise (fn) {
+        this.state = PENDING;
+        this.value = null;
+        this.successArray = [];
+        this.errorArray = [];
+        const resolve = value => {
+            if (this.state !== PENDING) return
+            this.value = value;
+            this.state = FULFILED;
+            setTimeout(() => {
+                this.successArray.map(item => item())
+            })
+        }
+        const reject = value => {
+            if (this.state !== PENDING) return
+            this.value = value;
+            this.state = REJECTED;
+            setTimeout(() => {
+                this.errorArray.map(item => item())
+            })
+        }
+        try {
+            fn(resolve, reject)
+        } catch(e) {
+            reject(e)
+        }
+    }
+    Promise.prototype.then = function(successFn, errorFn) {
+        successFn = typeof successFn === "function" ? successFn: () => {};
+        errorFn = typeof errorFn === "function" ? errorFn: () => {};
+        const promise = new Promise((resolve, reject) => {
+            if (this.state === PENDING) {
+                this.successArray.push(() => {
+                    try {
+                        const value = successFn(this.value);
+                        middle(promise, value, resolve, reject)
+                    } catch(e) {
+                        reject(e)
+                    }
+                })
+                this.errorArray.push(() => {
+                    try {
+                        const value = errorFn(this.value);
+                        middle(promise, value, resolve, reject)
+                    } catch(e) {
+                        reject(e)
+                    }
+                })
+            }
+        })
+    }
+    function middle(promise, value, resolve, reject) {
+        if (promise ===value) {
+            return reject(`error`)
+        }
+        if (value instanceof Promise || (value && typeof value.then === 'function')) {
+            return value.then((res) => {
+                middle(promise, res, resolve, reject)
+            }, reject)
+        }
+        return resolve(value)
+    }
+
+})();
 
 
 
