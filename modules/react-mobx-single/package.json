@@ -43,7 +43,7 @@
         "url-loader": "^1.0.1",
         "vinyl-named": "^1.1.0",
         "webpack": "^3.10.0",
-        "webpack-bundle-analyzer": "^2.11.1",
+        "webpack-bundle-analyzer": "^3.6.0",
         "webpack-dev-server": "^2.11.1"
     },
     "scripts": {
