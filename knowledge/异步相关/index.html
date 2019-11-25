@@ -9,93 +9,127 @@
     <body>
         <script>
             (() => {
-                const PENDING = "P";
-                const FULFILLED = "F";
-                const REJECTED = "R";
-
-                const isFunction = fn => typeof fn === "function";
-                const isPromise = fn => fn instanceof PRO;
-                const isObject = fn => typeof fn === "object";
-                const isThenable = fn => (isFunction(fn) || isObject(fn)) && "then" in fn;
-
-                function transform(promise, state, value) {
-                    promise.state = state;
-                    promise.result = value;
-                    const [callbacks] = promise;
-                    setTimeout(() => {
-                        while (callbacks.length) {
-                            //
-                            const cb = callbacks.shift();
-                            handleCallback(cb, state, value);
-                        }
-                    }, 0);
-                }
-
-                function PRO(fn) {
+                const PENDING = "PENDING",
+                    REJECTED = "REJECTRD",
+                    ONFULFILE = "ONFULFILE";
+                function Promises(fnm) {
+                    this.value = null;
                     this.state = PENDING;
-                    this.result = null;
-                    this.callbacks = [];
-                    let flag = false;
-                    const onErrorFn = err => transform(this, REJECTED, err);
-                    const onSuccessFn = value => transform(this, FULFILLED, value);
+                    this.successArray = [];
+                    this.errorArray = [];
                     const resolve = value => {
-                        if (flag) return;
-                        flag = true;
-                        resolvePromise(this, value, onSuccessFn, onErrorFn);
+                        if (this.state !== PENDING) return;
+                        // Promise.resolve().then(_ => {
+                        //     this.value = value;
+                        //     this.state = ONFULFILE;
+                        //     this.successArray.forEach(fn => {
+                        //         fn(value);
+                        //     });
+                        // });
+                        setTimeout(() => {
+                            this.value = value;
+                            this.state = ONFULFILE;
+                            this.successArray.forEach(fn => {
+                                fn(value);
+                            });
+                        }, 0);
                     };
                     const reject = err => {
-                        if (flag) return;
-                        flag = true;
-                        onErrorFn(err);
+                        if (this.state !== PENDING) return;
+                        setTimeout(() => {
+                            this.value = err;
+                            this.state = REJECTED;
+                            this.errorArray.forEach(fn => {
+                                fn(err);
+                            });
+                        }, 0);
                     };
-
                     try {
-                        fn(resolve, reject);
+                        fnm(resolve, reject);
                     } catch (e) {
                         reject(e);
                     }
                 }
-
-                function resolvePromise(promise, value, resolve, reject) {
-                    if (promise === value) {
-                        return reject(new Error());
+                function middle(p2, value, resolve, reject) {
+                    // console.log(value);
+                    if (p2 === value) {
+                        throw new Error("error");
                     }
-                    if (isPromise(value)) {
-                        // 使用倒推法， 如果return的是promise，那then里的function一定是推到那个promise的callback中，所以就要transform,所以就要PRO中的resolve
-                        return value.then(resolve, reject);
-                    }
-                    if (isThenable(value)) {
+                    if (value instanceof Promises || (value && value.then && typeof value.then === "function")) {
                         try {
-                            const { then } = value;
-                            return new PRO(then.bind(value)).then(resolve, reject);
+                            value.then(res => middle(p2, res, resolve, reject), reject);
                         } catch (e) {
                             reject(e);
                         }
+                        return;
                     }
                     resolve(value);
                 }
-
-                function handleCallback(callback, state, value) {
-                    const { onSuccessCallback, onErrorCallback, resolve, reject } = callback;
-                    if (state === FULFILLED) {
-                        isFunction(onSuccessCallback) ? resolve(onSuccessCallback(value)) : resolve(value);
-                    } else if (state === REJECTED) {
-                        isFunction(onErrorCallback) ? reject(onErrorCallback(value)) : reject(value);
-                    }
-                }
-
-                PRO.prototype.then = function(onSuccessCallback, onErrorCallback) {
-                    return new PRO((resolve, reject) => {
-                        const callback = { onSuccessCallback, onErrorCallback, resolve, reject };
+                Promises.prototype.then = function(successFn, errorFn) {
+                    successFn = successFn && typeof successFn === "function" ? successFn : val => val;
+                    errorFn = errorFn && typeof errorFn === "function" ? errorFn : err => err;
+                    const p2 = new Promises((resolve, reject) => {
                         if (this.state === PENDING) {
-                            this.callbacks.push(callback);
-                        } else {
-                            setTimeout(() => {
-                                handleCallback(callback, this.state, this.result);
-                            }, 0);
+                            this.successArray.push(() => {
+                                try {
+                                    const value = successFn(this.value);
+                                    middle(p2, value, resolve, reject);
+                                } catch (e) {
+                                    reject(e);
+                                }
+                            });
+                            this.errorArray.push(() => {
+                                try {
+                                    const value = errorFn(this.value);
+                                    middle(p2, value, resolve, reject);
+                                } catch (e) {
+                                    reject(e);
+                                }
+                            });
+                        } else if (this.state === ONFULFILE) {
+                            middle(p2, successFn(this.value), resolve, reject);
                         }
                     });
+                    return p2;
                 };
+                Promises.prototype.catch = function(fn) {
+                    return this.then(
+                        val => {
+                            console.log(val);
+                            return val;
+                        },
+                        e => {
+                            fn(e);
+                            return e;
+                        }
+                    );
+                };
+
+                function c(value, time = 3000) {
+                    return new Promises((res, rej) => {
+                        setTimeout(() => {
+                            res(value);
+                        }, time);
+                    });
+                }
+
+                c(1)
+                    // .then(res => {
+                    //     console.log(`line1: `, res);
+                    //     return c(2);
+                    // })
+                    .then(res => {
+                        console.log(`line2: `, res);
+                        // throw new Error("error");
+                        return res;
+                    })
+                    // .catch(e => {
+                    //     console.log(e);
+                    //     return e;
+                    // })
+                    .then(res => {
+                        console.log(`line3: `, res);
+                    });
             })();
         </script>
     </body>

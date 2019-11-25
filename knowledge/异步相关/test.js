@@ -24,3 +24,9 @@ new Promise(function(resolve) {
 });
 
 console.log("script end");
+
+const http = require("http");
+
+http.createServer(function(req, res) {
+    res.write(123);
+}).listen(9999);

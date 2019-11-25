@@ -127,7 +127,10 @@
         if (promise === value) return reject(new Error("error"));
         if (value instanceof Promise || (value && typeof value.then === "function")) {
             try {
-                value.then(value => middle(promise, value, resolve, reject), e => reject(e));
+                value.then(
+                    value => middle(promise, value, resolve, reject),
+                    e => reject(e)
+                );
             } catch (e) {
                 reject(e);
             }
@@ -211,4 +214,128 @@
             fn();
         });
     };
+})();
+
+(() => {
+    const PENDING = "PENDING",
+        REJECTED = "REJECTRD",
+        ONFULFILE = "ONFULFILE";
+    function Promises(fnm) {
+        this.value = null;
+        this.state = PENDING;
+        this.successArray = [];
+        this.errorArray = [];
+        const resolve = value => {
+            if (this.state !== PENDING) return;
+            // Promise.resolve().then(_ => {
+            //     this.value = value;
+            //     this.state = ONFULFILE;
+            //     this.successArray.forEach(fn => {
+            //         fn(value);
+            //     });
+            // });
+            setTimeout(() => {
+                this.value = value;
+                this.state = ONFULFILE;
+                this.successArray.forEach(fn => {
+                    fn(value);
+                });
+            }, 0);
+        };
+        const reject = err => {
+            if (this.state !== PENDING) return;
+            setTimeout(() => {
+                this.value = err;
+                this.state = REJECTED;
+                this.errorArray.forEach(fn => {
+                    fn(err);
+                });
+            }, 0);
+        };
+        try {
+            fnm(resolve, reject);
+        } catch (e) {
+            reject(e);
+        }
+    }
+    function middle(p2, value, resolve, reject) {
+        // console.log(value);
+        if (p2 === value) {
+            throw new Error("error");
+        }
+        if (value instanceof Promises || (value && value.then && typeof value.then === "function")) {
+            try {
+                value.then(res => middle(p2, res, resolve, reject), reject);
+            } catch (e) {
+                reject(e);
+            }
+            return;
+        }
+        resolve(value);
+    }
+    Promises.prototype.then = function(successFn, errorFn) {
+        successFn = successFn && typeof successFn === "function" ? successFn : val => val;
+        errorFn = errorFn && typeof errorFn === "function" ? errorFn : err => err;
+        const p2 = new Promises((resolve, reject) => {
+            if (this.state === PENDING) {
+                this.successArray.push(() => {
+                    try {
+                        const value = successFn(this.value);
+                        middle(p2, value, resolve, reject);
+                    } catch (e) {
+                        reject(e);
+                    }
+                });
+                this.errorArray.push(() => {
+                    try {
+                        const value = errorFn(this.value);
+                        middle(p2, value, resolve, reject);
+                    } catch (e) {
+                        reject(e);
+                    }
+                });
+            } else if (this.state === ONFULFILE) {
+                middle(p2, successFn(this.value), resolve, reject);
+            }
+        });
+        return p2;
+    };
+    Promises.prototype.catch = function(fn) {
+        return this.then(
+            val => {
+                console.log(val);
+                return val;
+            },
+            e => {
+                fn(e);
+                return e;
+            }
+        );
+    };
+
+    function c(value, time = 3000) {
+        return new Promises((res, rej) => {
+            setTimeout(() => {
+                res(value);
+            }, time);
+        });
+    }
+
+    c(1)
+        // .then(res => {
+        //     console.log(`line1: `, res);
+        //     return c(2);
+        // })
+        .then(res => {
+            console.log(`line2: `, res);
+            // throw new Error("error");
+            return res;
+        })
+        // .catch(e => {
+        //     console.log(e);
+        //     return e;
+        // })
+        .then(res => {
+            console.log(`line3: `, res);
+        });
 })();
