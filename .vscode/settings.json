@@ -29,5 +29,8 @@
     },
     "emmet.syntaxProfiles": {
         "javascript": "jsx"
+    },
+    "files.associations": {
+        "*.ejs": "js"
     }
 }
